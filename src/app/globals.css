@@ -21,6 +21,17 @@ body {
 
 @layer base {
   :root {
+    --iridium: #3F3F3F;
+  --cream: #F5F5F5;
+  --gravel: #4E4E4E;
+  --orange: #FFA947;
+  --peach: #FFE0BD;
+  --platinum: #E6E6E6;
+  --ghost: #CDCDCD;
+  --grandis: #FFC989;
+  --porcelain: #F1F1F1;
+  --ironside: #636363;
+  
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
