@@ -37,3 +37,16 @@ export const UserRegistrationSchema: ZodType<UserRegistrationProps> = z
     message: "Emails do not match",
     path: ["confirmEmail"],
   });
+
+export type UserLoginProps = {
+  email: string;
+  password: string;
+};
+
+export const UserLoginSchema: ZodType<UserLoginProps> = z.object({
+  email: z.string().email({ message: "You did not enter a valid email" }),
+  password: z
+    .string()
+    .min(8, { message: "Your Password must be at least 8 characters" })
+    .max(32, { message: "Your Password must be at most 32 characters" }),
+});

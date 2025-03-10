@@ -18,7 +18,7 @@ const ButtonHandler = (props: Props) => {
   const { isDirty: isEmail } = getFieldState("email", formState);
   const { isDirty: isPassword } = getFieldState("password", formState);
 
-  if (currentStep === 3) {
+  if (currentStep === 1) {
     return (
       <div className="w-full flex flex-col gap-3 items-center">
         <Button
