@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "www.launchuicomponents.com",
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
+  // existing config here, e.g., for Tailwind
 };
 
 export default nextConfig;

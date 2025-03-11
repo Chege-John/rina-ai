@@ -1,6 +1,6 @@
 import Image from "next/image";
 import * as React from "react";
-import { Button } from "../ui/button";
+import Link from "next/link";
 
 function NavBar() {
   return (
@@ -12,7 +12,7 @@ function NavBar() {
         <Image
           src="/images/logo.png"
           alt="logo"
-          sizes="100vw"
+          sizes="10vw"
           style={{ width: "20%", height: "auto" }}
           width={0}
           height={0}
@@ -31,7 +31,12 @@ function NavBar() {
         <li>Contact Us</li>
       </ul>
 
-      <Button className="bg-orange-400 px-8">Free Trial</Button>
+      <Link
+        href="/dashboard"
+        className="bg-orange-400 px-4 py-2 rounded-md text-white"
+      >
+        Free Trial
+      </Link>
     </div>
   );
 }

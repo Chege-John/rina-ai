@@ -25,7 +25,7 @@ export default {
       iridium: "#3F3F3F",
       orange: "#FFA947",
       peach: "#FFE0BD",
-      platinum: "E6E6E6",
+      platinum: "#E6E6E6",
       ghost: "#CDCDCD",
       grandis: "#FFC989",
       porcelain: "#F1F1F1",

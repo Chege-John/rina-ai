@@ -21,17 +21,17 @@ body {
 
 @layer base {
   :root {
-    --iridium: #3F3F3F;
-  --cream: #F5F5F5;
-  --gravel: #4E4E4E;
-  --orange: #FFA947;
-  --peach: #FFE0BD;
-  --platinum: #E6E6E6;
-  --ghost: #CDCDCD;
-  --grandis: #FFC989;
-  --porcelain: #F1F1F1;
-  --ironside: #636363;
-  
+    --iridium: #3f3f3f;
+    --cream: #f5f5f5;
+    --gravel: #4e4e4e;
+    --orange: #ffa947;
+    --peach: #ffe0bd;
+    --platinum: #e6e6e6;
+    --ghost: #cdcdcd;
+    --grandis: #ffc989;
+    --porcelain: #f1f1f1;
+    --ironside: #636363;
+
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -63,20 +63,16 @@ body {
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --brand: 27 96% 61%;
+    --brand-foreground: 31 97% 72%;
   }
 
   .dark {
@@ -115,6 +111,7 @@ body {
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --brand: 31 97% 72%;
   }
 }
 
@@ -127,19 +124,21 @@ body {
 .chat-bubble {
   background-color: #f1f1f1;
   padding: 16px 28px;
-  -webkit-border-t-radius: 10px;
+  -webkit-border-radius: 10px;
   -webkit-border-bottom-left-radius: 2px;
-  -moz-border-t-radius: 10px;
-  -moz-border-radius-bottomleft: 2px;
+  -moz-border-radius: 10px;
+  -moz-border-bottom-left-radius: 2px;
   border-radius: 10px;
   border-bottom-left-radius: 2px;
   display: inline-block;
 }
+
 .typing {
   align-items: center;
   display: flex;
   height: 17px;
 }
+
 .typing .dot {
   animation: mercuryTypingAnimation 1.8s infinite ease-in-out;
   background-color: #ffc989;
@@ -150,15 +149,19 @@ body {
   width: 7px;
   display: inline-block;
 }
+
 .typing .dot:nth-child(1) {
   animation-delay: 200ms;
 }
+
 .typing .dot:nth-child(2) {
   animation-delay: 300ms;
 }
+
 .typing .dot:nth-child(3) {
   animation-delay: 400ms;
 }
+
 .typing .dot:last-child {
   margin-right: 0;
 }
@@ -183,4 +186,14 @@ body {
   --h-accent: 30;
   --s-accent: 100%;
   --l-accent: 50%;
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
 }
