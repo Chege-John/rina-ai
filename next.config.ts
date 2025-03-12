@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "ucarecdn.com",
+      },
+      {
+        protocol: "https",
         hostname: "www.launchuicomponents.com",
         port: "",
         pathname: "/**",
