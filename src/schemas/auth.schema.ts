@@ -43,6 +43,11 @@ export type UserLoginProps = {
   password: string;
 };
 
+export type ChangePasswordProps = {
+  password: string;
+  confirmPassword: string;
+};
+
 export const UserLoginSchema: ZodType<UserLoginProps> = z.object({
   email: z.string().email({ message: "You did not enter a valid email" }),
   password: z
@@ -50,3 +55,20 @@ export const UserLoginSchema: ZodType<UserLoginProps> = z.object({
     .min(8, { message: "Your Password must be at least 8 characters" })
     .max(32, { message: "Your Password must be at most 32 characters" }),
 });
+
+export const ChangePasswordSchema: ZodType<ChangePasswordProps> = z
+  .object({
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters" })
+      .max(32, { message: "Password must be at most 32 characters" })
+      .refine(
+        (value) => /^[a-zA-Z0-9_.-]*$/.test(value ?? ""),
+        "Password should contain only alphabets and numbers"
+      ),
+    confirmPassword: z.string(),
+  })
+  .refine((schema) => schema.password === schema.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });

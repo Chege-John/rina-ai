@@ -1,8 +1,8 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { RedirectToSignIn } from "@clerk/nextjs";
 import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation"; // Add this import
 import { onGetAllAccountDomains } from "../settings";
 
 export const onCompleteUserRegistration = async (
@@ -34,7 +34,7 @@ export const onCompleteUserRegistration = async (
       };
     }
   } catch (error) {
-    console.error(error); // Log the error for debugging purposes
+    console.error(error);
     return {
       status: 400,
       message: "An error occurred during user registration.",
@@ -46,7 +46,7 @@ export const onLoginUser = async () => {
   const user = await currentUser();
 
   if (!user) {
-    return RedirectToSignIn();
+    redirect("/auth/sign-in"); // Replace RedirectToSignIn with redirect
   }
 
   try {
@@ -72,8 +72,6 @@ export const onLoginUser = async () => {
       domain: domains?.domains ?? [],
     };
   } catch (error: unknown) {
-    // Explicitly type the error as unknown
-    // Handle the unknown error type
     const errorMessage =
       error instanceof Error ? error.message : "An unexpected error occurred";
 

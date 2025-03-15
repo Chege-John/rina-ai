@@ -8,6 +8,8 @@ type Props = {
 };
 
 const OwnerLayout = async ({ children }: Props) => {
+  console.log("Dashboard Layout rendering"); // Debug
+
   const authenticated = await onLoginUser();
   if (!authenticated) return null;
   return (
@@ -21,5 +23,4 @@ const OwnerLayout = async ({ children }: Props) => {
     </ChatProvider>
   );
 };
-
 export default OwnerLayout;

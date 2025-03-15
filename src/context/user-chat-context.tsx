@@ -1,6 +1,6 @@
 "use client";
 
-import { Children, createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 type ChatInitialValuesProps = {
   realtime: boolean;
@@ -43,7 +43,7 @@ const ChatInitialValues: ChatInitialValuesProps = {
 const chatContext = createContext(ChatInitialValues);
 const { Provider } = chatContext;
 
-export const ChatProvider = ({ Children }: { children: React.ReactNode }) => {
+export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [chats, setChats] = useState(ChatInitialValues.chats);
   const [loading, setLoading] = useState(ChatInitialValues.loading);
   const [chatRoom, setChatRoom] = useState(ChatInitialValues.chatRoom);
@@ -59,7 +59,7 @@ export const ChatProvider = ({ Children }: { children: React.ReactNode }) => {
     realtime,
     setRealtime,
   };
-  return <Provider value={values}>{Children}</Provider>;
+  return <Provider value={values}>{children}</Provider>;
 };
 
 export const useChatContext = () => {

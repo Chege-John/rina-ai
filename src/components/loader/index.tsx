@@ -1,15 +1,23 @@
 import React from "react";
 import { Spinner } from "../spinner";
+import { cn } from "@/lib/utils";
 
 type Loaderprops = {
   loading: boolean;
   children: React.ReactNode;
+  className?: string;
+  noPadding?: boolean;
 };
 
-export const Loader = ({ loading, children }: Loaderprops) => {
+export const Loader = ({
+  loading,
+  children,
+  noPadding,
+  className,
+}: Loaderprops) => {
   return loading ? (
-    <div className="w-full py-5 flex justify-center">
-      <Spinner />
+    <div className={cn(className || "w-full py-5 flex justify-center")}>
+      <Spinner noPadding={noPadding} />
     </div>
   ) : (
     children
