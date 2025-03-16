@@ -215,3 +215,154 @@ export const onGetCurrentDomainInfo = async (domain: string) => {
     console.log(error);
   }
 };
+
+export const onUpdateDomain = async (id: string, name: string) => {
+  try {
+    const domainExists = await prisma.domain.findFirst({
+      where: {
+        name: {
+          contains: name,
+        },
+      },
+    });
+
+    if (!domainExists) {
+      const domain = await prisma.domain.update({
+        where: {
+          id,
+        },
+        data: {
+          name,
+        },
+      });
+      if (domain) {
+        return {
+          status: 200,
+          message: "Domain updated successfully",
+        };
+      }
+      return {
+        status: 400,
+        message: "Failed to update domain",
+      };
+    }
+    return {
+      status: 400,
+      message: "Domain already exists",
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: 500,
+      message: "Internal server error",
+    };
+  }
+};
+
+export const onChatBotImageUpdate = async (id: string, icon: string) => {
+  const user = await currentUser();
+  if (!user) return;
+  try {
+    const domain = await prisma.domain.update({
+      where: {
+        id,
+      },
+      data: {
+        chatbot: {
+          update: {
+            data: {
+              icon,
+            },
+          },
+        },
+      },
+    });
+
+    if (domain) {
+      return {
+        status: 200,
+        message: "Domain updated successfully",
+      };
+    }
+
+    return {
+      status: 400,
+      message: "Failed to update domain",
+    };
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const onUpdateWelcomeMessage = async (
+  message: string,
+  domainId: string
+) => {
+  console.log(message, domainId);
+  try {
+    const update = await prisma.domain.update({
+      where: {
+        id: domainId,
+      },
+      data: {
+        chatbot: {
+          update: {
+            data: {
+              welcomeMessage: message,
+            },
+          },
+        },
+      },
+    });
+    if (update) {
+      return {
+        status: 200,
+        message: "Welcome message updated successfully",
+      };
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const onDeleteUserDomain = async (id: string) => {
+  const user = await currentUser();
+  if (!user) return;
+  try {
+    //first verify that domain belongs to user
+    const validUser = await prisma.user.findUnique({
+      where: {
+        clerkId: user.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (validUser) {
+      //check that domain belongs to this user and delete
+      const deleteDomain = await prisma.domain.delete({
+        where: {
+          userId: validUser.id,
+          id,
+        },
+        select: {
+          name: true,
+        },
+      });
+
+      if (deleteDomain) {
+        return {
+          status: 200,
+          message: `${deleteDomain.name} deleted successfully`,
+        };
+      }
+      return {
+        status: 400,
+        message: "Failed to delete domain",
+      };
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};

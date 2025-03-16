@@ -1,6 +1,6 @@
 "use client";
 import { useThemeMode } from "@/hooks/settings/use-settings";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Section } from "../section-label";
 import { cn } from "@/lib/utils";
 import { LightMode } from "../themes-ui/light-mode";
@@ -11,6 +11,12 @@ type Props = {};
 
 const DarkModetoggle = (props: Props) => {
   const { setTheme, theme } = useThemeMode();
+  const [clientTheme, setClientTheme] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    setClientTheme(theme); // Syncs theme only on client
+  }, [theme]);
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
       <div className="lg:col-span-1">
@@ -23,7 +29,7 @@ const DarkModetoggle = (props: Props) => {
         <div
           className={cn(
             "rounded-2xl overflow-hidden cursor-pointer border-4 border-transparent",
-            theme == "system" && "border-orange-400"
+            clientTheme === "system" && "border-orange-400"
           )}
           onClick={() => setTheme("system")}
         >
@@ -32,7 +38,7 @@ const DarkModetoggle = (props: Props) => {
         <div
           className={cn(
             "rounded-2xl overflow-hidden cursor-pointer border-4 border-transparent",
-            theme == "light" && "border-orange-400"
+            clientTheme === "light" && "border-orange-400"
           )}
           onClick={() => setTheme("light")}
         >
@@ -41,7 +47,7 @@ const DarkModetoggle = (props: Props) => {
         <div
           className={cn(
             "rounded-2xl overflow-hidden cursor-pointer border-4 border-transparent",
-            theme == "dark" && "border-orange-400"
+            clientTheme === "dark" && "border-orange-400"
           )}
           onClick={() => setTheme("dark")}
         >
