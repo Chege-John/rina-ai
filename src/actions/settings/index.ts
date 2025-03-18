@@ -366,3 +366,159 @@ export const onDeleteUserDomain = async (id: string) => {
     console.log(error);
   }
 };
+
+export const onCreateHelpDeskQuestion = async (
+  id: string,
+  question: string,
+  answer: string
+) => {
+  try {
+    const helpDeskQuestion = await prisma.domain.update({
+      where: {
+        id,
+      },
+      data: {
+        helpdesk: {
+          create: {
+            question,
+            answer,
+          },
+        },
+      },
+      include: {
+        helpdesk: {
+          select: {
+            id: true,
+            question: true,
+            answer: true,
+          },
+        },
+      },
+    });
+
+    if (!helpDeskQuestion) {
+      return {
+        status: 400,
+        message: "Failed to create question: No data returned",
+        questions: [],
+      };
+    }
+
+    return {
+      status: 200,
+      message: "Question created successfully",
+      questions: helpDeskQuestion.helpdesk || [],
+    };
+  } catch (error) {
+    console.error("Error creating help desk question:", error);
+    return {
+      status: 500,
+      message: "Internal server error while creating question",
+      questions: [],
+    };
+  }
+};
+
+export const onGetAllHelpDeskQuestions = async (id: string) => {
+  try {
+    const questions = await prisma.helpdesk.findMany({
+      where: {
+        domainId: id,
+      },
+      select: {
+        id: true,
+        question: true,
+        answer: true,
+      },
+    });
+
+    return {
+      status: 200,
+      message: "Questions retrieved successfully",
+      questions: questions || [],
+    };
+  } catch (error) {
+    console.error("Error fetching help desk questions:", error);
+    return {
+      status: 500,
+      message: "Internal server error while fetching questions",
+      questions: [],
+    };
+  }
+};
+
+export const onCreateFilterQuestions = async (id: string, question: string) => {
+  try {
+    const filterQuestion = await prisma.domain.update({
+      where: {
+        id,
+      },
+      data: {
+        filterQuestions: {
+          create: {
+            question,
+          },
+        },
+      },
+      include: {
+        filterQuestions: {
+          select: {
+            id: true,
+            question: true,
+          },
+        },
+      },
+    });
+
+    if (!filterQuestion) {
+      return {
+        status: 400,
+        message: "Failed to create question: No data returned",
+        questions: [],
+      };
+    }
+
+    return {
+      status: 200,
+      message: "Question created successfully",
+      questions: filterQuestion.filterQuestions || [],
+    };
+  } catch (error) {
+    console.error("Error creating filter question:", error);
+    return {
+      status: 500,
+      message: "Internal server error while creating question",
+      questions: [],
+    };
+  }
+};
+
+export const onGetAllFilterQuestions = async (id: string) => {
+  try {
+    const questions = await prisma.filterQuestions.findMany({
+      where: {
+        domainId: id,
+      },
+      select: {
+        id: true,
+        question: true,
+      },
+      orderBy: {
+        question: "asc",
+      },
+    });
+
+    return {
+      status: 200,
+      message: "Questions retrieved successfully",
+      questions: questions || [],
+    };
+  } catch (error) {
+    console.error("Error fetching filter questions:", error);
+    return {
+      status: 500,
+      message: "Internal server error while fetching questions",
+      questions: [],
+    };
+  }
+};

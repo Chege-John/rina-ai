@@ -7,6 +7,9 @@ import CodeSnippet from "./code-snippet";
 import { AwardIcon } from "lucide-react";
 import EditChatbotIcon from "./edit-chatbot-icon";
 import dynamic from "next/dynamic";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Loader } from "@/components/loader";
 
 const WelcomeMessage = dynamic(
   () => import("./greetings-message").then((props) => props.default),
@@ -53,8 +56,8 @@ const SettingsForm = ({ id, name, plan, chatbot }: Props) => {
           </div>
         </div>
         <Separator orientation="horizontal" />
-        <div className="grid grid-cols-2">
-          <div className="col-span-1 flex flex-col gap-5">
+        <div className="grid md:grid-cols-2">
+          <div className="col-span-1 flex flex-col gap-5 order-last md:order-first">
             <EditChatbotIcon
               chatbot={chatbot}
               register={register}
@@ -66,7 +69,31 @@ const SettingsForm = ({ id, name, plan, chatbot }: Props) => {
               errors={errors}
             />
           </div>
+          <div className="col-span-1 relative md:mt-10 sm:mt-10">
+            <Image
+              src="/images/bot-ui.png"
+              alt="bot"
+              width={430}
+              height={669}
+            />
+          </div>
         </div>
+      </div>
+      <div className="flex gap-5 justify-end">
+        <Button
+          onClick={onDeleteDomain}
+          variant="destructive"
+          type="button"
+          className="px-10 h-[50px] bg-red-500 text-white"
+        >
+          <Loader loading={deleting}>Delete Domain</Loader>
+        </Button>
+        <Button
+          type="submit"
+          className="px-10 h-[50px] bg-green-700 text-white"
+        >
+          <Loader loading={loading}>Save Changes</Loader>
+        </Button>
       </div>
     </form>
   );

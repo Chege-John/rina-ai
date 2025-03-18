@@ -1,6 +1,10 @@
 import {
   onChatBotImageUpdate,
+  onCreateFilterQuestions,
+  onCreateHelpDeskQuestion,
   onDeleteUserDomain,
+  onGetAllFilterQuestions,
+  onGetAllHelpDeskQuestions,
   onUpdateDomain,
   onUpdatePassword,
   onUpdateWelcomeMessage,
@@ -13,12 +17,16 @@ import {
 import {
   DomainSettingsProps,
   DomainSettingsSchema,
+  FilterQuestionsProps,
+  FilterQuestionsSchema,
+  HelpDeskQuestionsProps,
+  HelpDeskQuestionsSchema,
 } from "@/schemas/settings.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UploadClient } from "@uploadcare/upload-client";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const upload = new UploadClient({
@@ -167,4 +175,133 @@ export const useSettings = ({ id }: { id: string }) => {
     onDeleteDomain,
     deleting,
   };
-}; // Added missing closing brace for the hook
+};
+
+export const useHelpDesk = (id: string) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<HelpDeskQuestionsProps>({
+    resolver: zodResolver(HelpDeskQuestionsSchema),
+  });
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isQuestions, setIsQuestions] = useState<
+    { id: string; question: string; answer: string }[]
+  >([]);
+
+  const onSubmitQuestion = handleSubmit(async (values) => {
+    try {
+      setLoading(true);
+      const question = await onCreateHelpDeskQuestion(
+        id,
+        values.question,
+        values.answer
+      );
+
+      // Check if question response is valid
+      if (!question || typeof question !== "object") {
+        throw new Error("Invalid response from server");
+      }
+
+      setIsQuestions(question.questions || []);
+      toast({
+        title: question.status === 200 ? "Success" : "Error",
+        description: question.message || "An error occurred",
+      });
+      reset();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create question",
+      });
+      console.error("Submission error:", error);
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  const onGetQuestions = async () => {
+    try {
+      setLoading(true);
+      const questions = await onGetAllHelpDeskQuestions(id);
+
+      // Validate response
+      if (!questions || typeof questions !== "object") {
+        throw new Error("Invalid questions response");
+      }
+
+      setIsQuestions(questions.questions || []);
+    } catch (error) {
+      console.error("Fetch questions error:", error);
+      setIsQuestions([]); // Fallback to empty array
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    onGetQuestions();
+  }, []);
+
+  return {
+    register,
+    errors,
+    onSubmitQuestion,
+    loading,
+    isQuestions,
+  };
+};
+
+export const useFilterQuestions = (id: string) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<FilterQuestionsProps>({
+    resolver: zodResolver(FilterQuestionsSchema),
+  });
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isQuestions, setIsQuestions] = useState<
+    { id: string; question: string }[]
+  >([]);
+
+  const onAddFilterQuestions = handleSubmit(async (values) => {
+    setLoading(true);
+    const questions = await onCreateFilterQuestions(id, values.question);
+    if (questions) {
+      setIsQuestions(questions.questions!);
+      toast({
+        title: questions.status === 200 ? "Success" : "Error",
+        description: questions.message || "An error occurred",
+      });
+      reset();
+      setLoading(false);
+    }
+  });
+
+  const onGetQuestions = async () => {
+    setLoading(true);
+    const questions = await onGetAllFilterQuestions(id);
+    if (questions) {
+      setIsQuestions(questions.questions!);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    onGetQuestions();
+  }, []);
+
+  return {
+    register,
+    errors,
+    onAddFilterQuestions,
+    loading,
+    isQuestions,
+  };
+};

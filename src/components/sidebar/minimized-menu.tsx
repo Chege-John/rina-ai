@@ -25,7 +25,7 @@ export const MinMenu = ({
   domains,
 }: MinMenuProps) => {
   return (
-    <div className="py-3 flex flex-col items-center h-full">
+    <div className="p-3 flex flex-col items-center h-full">
       <span className="animate-fade-in  delay-300 fill-mode-forwards cursor-pointer">
         <MenuIcon onClick={onShrink} />
       </span>

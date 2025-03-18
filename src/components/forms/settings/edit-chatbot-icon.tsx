@@ -1,6 +1,6 @@
 import { Section } from "@/components/section-label";
 import UploadButton from "@/components/upload-button";
-import { BotIcon, MessageSquare } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
