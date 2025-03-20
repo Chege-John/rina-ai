@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-const MAX_UPLOAD_SIZE = 2 * 1024 * 1024; // 2MB in bytes
-const ACCEPTED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+export const MAX_UPLOAD_SIZE = 2 * 1024 * 1024; // 2MB in bytes
+export const ACCEPTED_FILE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
 
 export type DomainSettingsProps = {
   domain?: string;

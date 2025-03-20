@@ -13,7 +13,7 @@ const BreadCrumb = (props: Props) => {
 
   const {
     chatRoom,
-    expand,
+    onExpand,
     loading,
     onActivateRealtime,
     page,
