@@ -10,12 +10,13 @@ type Props = { params: { domain: string } };
 const DomainSettingsPage = async ({ params }: Props) => {
   const domain = await onGetCurrentDomainInfo(params.domain);
   if (!domain) redirect("/dashboard");
+
   return (
     <>
       <InfoBar />
       <div className="overflow-y-auto w-full chat-window flex-1 h-0">
         <SettingsForm
-          plan={domain.subscription?.plan!}
+          plan={domain.subscription?.plan ?? "basic"}
           chatbot={domain.domains[0].chatbot}
           id={domain.domains[0].id}
           name={domain.domains[0].name}

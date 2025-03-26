@@ -32,6 +32,21 @@ export const pusherClient = {};
 // }
 //);
 
+export const postToParent = (message: string) => {
+  window.parent.postMessage(message, "*");
+};
+
+export const extractURLfromString = (url: string) => {
+  return url.match(/https?:\/\/[^\s"<>]+/);
+};
+
+export const extractEmailsFromString = (text: string): string[] | null => {
+  const matches = text.match(
+    /([a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9_-]+)/gi
+  );
+  return matches;
+};
+
 export const getMonthName = (month: number) => {
   return month == 1
     ? "Jan"

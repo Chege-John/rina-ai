@@ -40,12 +40,12 @@ const Bubble = ({ message, createdAt }: Props) => {
         className={cn(
           "flex flex-col gap-3 min-w-[200px] max-w-[300px] p-4 rounded-t-md",
           message.role == "assistant"
-            ? "bg-muted rounded-r-md"
+            ? "bg-gray-200 rounded-r-md"
             : "bg-orange-200 rounded-l-md"
         )}
       >
         {createdAt ? (
-          <div className="flex gap-2 text-xs text-gray-600">
+          <div className="flex gap-2 text-xs text-gray-800">
             <p>
               {createdAt.getDate()} {getMonthName(createdAt.getMonth())}
             </p>
