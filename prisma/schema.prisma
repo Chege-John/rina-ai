@@ -22,14 +22,17 @@ model User  {
   updatedAt DateTime  @updatedAt
 
   domains Domain[]
-
   subscription  Billings?
+
+  stripeId  String?
 }
 
 model Domain {
   id    String  @id @default(dbgenerated("gen_random_uuid()"))  @db.Uuid
   name  String
   icon  String
+
+  products  Product[]
 
   chatbot         Chatbot?
   helpdesk        Helpdesk[]
@@ -115,6 +118,16 @@ updatedAt      DateTime @updatedAt
 ChatRoom       ChatRoom? @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
 chatRoomId     String?  @db.Uuid
 }
+
+model Product {
+  id        String  @id @default(dbgenerated("gen_random_uuid()"))  @db.Uuid
+  name      String
+  price     Float   
+  image     String?  
+  Domain    Domain?  @relation(fields: [domainId], references: [id], onDelete: Cascade)
+  domainId  String?  @db.Uuid
+}
+
 
 enum  Plans {
   STANDARD

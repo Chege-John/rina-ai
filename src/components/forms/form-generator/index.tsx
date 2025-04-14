@@ -16,12 +16,14 @@ type Props = {
   errors: FieldErrors<FieldValues>;
   lines?: number;
   form?: string;
+  defaultValue?: string;
 };
 
 const FormGenerator = ({
   errors,
   inputType,
   name,
+  defaultValue,
   placeholder,
   register,
   type,
@@ -40,6 +42,7 @@ const FormGenerator = ({
             type={type}
             placeholder={placeholder}
             form={form}
+            defaultValue={defaultValue}
             {...register(name)}
           />
           <ErrorMessage
@@ -88,6 +91,7 @@ const FormGenerator = ({
             placeholder={placeholder}
             {...register(name)}
             rows={lines}
+            defaultValue={defaultValue}
           >
             {options?.length &&
               options.map((option) => (

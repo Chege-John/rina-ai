@@ -10,13 +10,14 @@ import { getMonthName, pusherClient } from "@/lib/utils";
 import {
   ChatBotMessageSchema,
   ConversationSearchSchema,
+  ConversationSearchProps,
 } from "@/schemas/conversation.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export const useConversation = () => {
-  const { register, watch } = useForm({
+  const { register, watch } = useForm<ConversationSearchProps>({
     resolver: zodResolver(ConversationSearchSchema),
     mode: "onChange",
   });
@@ -38,15 +39,23 @@ export const useConversation = () => {
   const [loading, setLoading] = useState<boolean>(false);
   useEffect(() => {
     const search = watch(async (value) => {
+      console.log("Domain ID being sent to backend:", value.domain);
       setLoading(true);
       try {
         const rooms = await onGetDomainChatRooms(value.domain);
-        if (rooms) {
-          setLoading(false);
+        console.log("Response from onGetDomainChatRooms:", rooms);
+
+        setLoading(false);
+        if (rooms && rooms.customer) {
           setChatRooms(rooms.customer);
+        } else {
+          setChatRooms([]); // Set to empty array if no rooms found
+          console.log("No chat rooms found for domain:");
         }
       } catch (error) {
-        console.log(error);
+        setLoading(false);
+        console.error("Error fetching chat rooms:", error);
+        setChatRooms([]);
       }
     });
     return () => search.unsubscribe();
@@ -56,13 +65,18 @@ export const useConversation = () => {
     try {
       loadMessages(true);
       const messages = await onGetChatMessages(id);
-      if (messages) {
+      if (messages && messages.length > 0) {
         setChatRoom(id);
-        setChats(messages[0].message);
-        loadMessages(false);
+        setChats(messages[0].message || []);
+      } else {
+        setChatRoom(id);
+        setChats([]);
       }
+      loadMessages(false);
     } catch (error) {
-      console.log(error);
+      console.log("Error in onGetActiveChatMessages:", error);
+      loadMessages(false);
+      setChats([]);
     }
   };
   return {
@@ -138,9 +152,7 @@ export const useChatWindow = () => {
     onScrollToBottom();
   }, [chats, messageWindowRef]);
 
-  //WIP: Setup Pusher
-  {
-    /*useEffect(() => {
+  useEffect(() => {
     if (chatRoom) {
       pusherClient.subscribe(chatRoom);
       pusherClient.bind("realtime-mode", (data: any) => {
@@ -148,8 +160,7 @@ export const useChatWindow = () => {
       });
       return () => pusherClient.unsubscribe("realtime-mode");
     }
-  }, [chatRoom]);*/
-  }
+  }, [chatRoom]);
 
   const onHandleSentMessage = handleSubmit(async (values) => {
     try {
@@ -160,8 +171,12 @@ export const useChatWindow = () => {
       );
       if (message) {
         setChats((prev) => [...prev, message.message[0]]);
-        //WIP: Once Pusher is set
-        //    await onRealTimeChat(chatRoom!, message.message[0].message, message.message[0].id, 'assistant')
+        await onRealTimeChat(
+          chatRoom!,
+          message.message[0].message,
+          message.message[0].id,
+          "assistant"
+        );
       }
     } catch (error) {
       console.log(error);

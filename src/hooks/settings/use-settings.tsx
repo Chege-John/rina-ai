@@ -2,6 +2,7 @@ import {
   onChatBotImageUpdate,
   onCreateFilterQuestions,
   onCreateHelpDeskQuestion,
+  onCreateNewDomainProduct,
   onDeleteUserDomain,
   onGetAllFilterQuestions,
   onGetAllHelpDeskQuestions,
@@ -15,6 +16,8 @@ import {
   ChangePasswordSchema,
 } from "@/schemas/auth.schema";
 import {
+  AddProductProps,
+  AddProductSchema,
   DomainSettingsProps,
   DomainSettingsSchema,
   FilterQuestionsProps,
@@ -52,7 +55,7 @@ export const useChangePassword = () => {
     mode: "onChange",
   });
 
-  const { loading, setLoading } = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onChangePassword = handleSubmit(async (values: ChangePasswordProps) => {
     try {
@@ -303,5 +306,53 @@ export const useFilterQuestions = (id: string) => {
     onAddFilterQuestions,
     loading,
     isQuestions,
+  };
+};
+
+export const useProducts = (domainId: string) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AddProductProps>({
+    resolver: zodResolver(AddProductSchema),
+  });
+
+  const onCreateNewProduct = handleSubmit(async (values) => {
+    try {
+      setLoading(true);
+      const uploaded = await upload.uploadFile(values.image[0]);
+      const product = await onCreateNewDomainProduct(
+        domainId,
+        values.name,
+        uploaded.uuid,
+        values.price
+      );
+      if (product) {
+        reset();
+        toast({
+          title: product.status === 200 ? "Success" : "Error",
+          description: product.message,
+        });
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Create product error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create product",
+      });
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  return {
+    register,
+    errors,
+    onCreateNewProduct,
+    loading,
   };
 };

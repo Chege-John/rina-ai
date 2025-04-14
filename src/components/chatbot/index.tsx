@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { useChatBot } from "@/hooks/chatbot/use-chatbot";
 import React, { useEffect } from "react";
@@ -25,13 +27,15 @@ const AiChatBot = (props: Props) => {
 
   // Log key state for debugging
   useEffect(() => {
+    console.log("DEBUG: Register in AiChatBot:", register);
+    console.log("DEBUG: onStartChatting in AiChatBot:", onStartChatting);
     console.log("Component re-rendered with:");
     console.log("currentBot:", currentBot);
-    console.log("Bot icon URL:", currentBot?.chatbot?.icon); // Fixed to lowercase
-  }, [currentBot, loading, botOpened]);
+    console.log("Bot icon URL:", currentBot?.chatbot?.icon);
+  }, [currentBot, loading, botOpened, register, onStartChatting]);
 
   return (
-    <div className="h-screen flex flex-col justify-end items-end gap-4">
+    <div className="h-screen flex flex-col justify-end items-end gap-4 ">
       <BotWindow
         register={register}
         chats={onChats}
@@ -48,10 +52,11 @@ const AiChatBot = (props: Props) => {
       />
       <div
         className={cn(
-          "rounded-full relative cursor-pointer shadow-md w-20 h-20 flex items-center justify-center",
-          loading
-            ? "bg-gray-200"
-            : currentBot?.chatbot?.background || "bg-orange" // Fixed to lowercase
+          "rounded-full relative cursor-pointer w-20 h-20 flex items-center justify-center transition-all duration-300 ease-in-out",
+          loading ? "bg-gray-200" : "",
+          !loading && currentBot?.chatbot?.icon
+            ? "bg-transparent shadow-none"
+            : "shadow-md bg-orange-300"
         )}
         onClick={loading ? undefined : onOpenChatBot}
       >
@@ -67,6 +72,7 @@ const AiChatBot = (props: Props) => {
               }/`}
               alt="bot"
               fill
+              className="object-cover p-2" //
               onError={(e) => {
                 console.error("Failed to load bot icon");
                 e.currentTarget.style.display = "none";
@@ -82,7 +88,7 @@ const AiChatBot = (props: Props) => {
           </div>
         ) : (
           <BotIcon
-            size={78}
+            size={70}
             className="bg-orange-400 rounded-full"
             color={currentBot?.chatbot?.textColor || "#e07e16"} // Fixed to lowercase
           />

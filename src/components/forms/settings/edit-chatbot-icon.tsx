@@ -28,8 +28,8 @@ const EditChatbotIcon = ({ register, errors, chatbot }: Props) => {
           <Image
             src={`https:ucarecdn.com/${chatbot.icon}`}
             alt="bot"
-            width={80}
-            height={80}
+            width={550}
+            height={800}
           />
         </div>
       ) : (

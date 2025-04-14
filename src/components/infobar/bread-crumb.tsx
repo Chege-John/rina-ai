@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import useSideBar from "@/context/use-sidebar";
 import React from "react";
 import { Loader } from "../loader";
-import { Switch } from "@radix-ui/react-switch";
+import { Switch } from "../ui/switch";
 
 type Props = {};
 
@@ -29,7 +31,7 @@ const BreadCrumb = (props: Props) => {
             <Switch
               defaultChecked={realtime}
               onClick={(e) => onActivateRealtime(e)}
-              className="data-[state=checked]:bg-orange-500 data-[slate=unchecked]:bg-gray-300"
+              className="data-[state=checked]:bg-orange-500 data-[state=unchecked]:bg-gray-300"
             />
           </Loader>
         )}

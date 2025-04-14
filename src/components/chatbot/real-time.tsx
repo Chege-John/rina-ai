@@ -1,12 +1,13 @@
 import React from "react";
 import { Card } from "../ui/card";
+import { useRealTime } from "@/hooks/chatbot/use-chatbot";
 
 type Props = {
   chatRoomId: string;
   setChats: React.Dispatch<
     React.SetStateAction<
       {
-        role: "assistant" | "user";
+        role: "assistant" | "user" | "owner";
         content: string;
         link?: string | undefined;
       }[]
@@ -15,10 +16,9 @@ type Props = {
 };
 
 const RealTimeMode = ({ chatRoomId, setChats }: Props) => {
-  //WIP: Setup Real time mode
-  // useRealTime(chatRoomId, setChats);
+  useRealTime(chatRoomId, setChats);
   return (
-    <Card className="px-3 rounded-full py-1 bg-orange-300 text-white text-sm">
+    <Card className="px-3 rounded-full py-1 bg-orange-300 text-black text-sm">
       Real Time
     </Card>
   );

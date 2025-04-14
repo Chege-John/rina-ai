@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import { Separator } from "@/components/ui/separator";
 import { useSettings } from "@/hooks/settings/use-settings";
@@ -40,7 +41,7 @@ const SettingsForm = ({ id, name, plan, chatbot }: Props) => {
     <form className="flex flex-col gap-8 pb-10" onSubmit={onUpdateSettings}>
       <div className="flex flex-col gap-3">
         <h2 className="font-bold text-2xl">Domain Settings</h2>
-        <Separator orientation="horizontal" />
+        <Separator orientation="horizontal" className="bg-gray-200" />
         <DomainUpdate name={name} register={register} errors={errors} />
         <CodeSnippet id={id} />
       </div>
@@ -55,7 +56,7 @@ const SettingsForm = ({ id, name, plan, chatbot }: Props) => {
             Premium
           </div>
         </div>
-        <Separator orientation="horizontal" />
+        <Separator orientation="horizontal" className="bg-gray-200" />
         <div className="grid md:grid-cols-2">
           <div className="col-span-1 flex flex-col gap-5 order-last md:order-first">
             <EditChatbotIcon

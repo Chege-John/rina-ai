@@ -50,25 +50,19 @@ export const onGetConversationMode = async (id: string) => {
 };
 
 export const onGetDomainChatRooms = async (id: string) => {
+  console.log("Domain ID received by onGetDomainChatRooms:", id);
+
   try {
-    const domains = await prisma.domain.findUnique({
+    const domain = await prisma.domain.findUnique({
       where: {
         id,
       },
-      select: {
+      include: {
         customer: {
-          select: {
-            email: true,
+          include: {
             chatRoom: {
-              select: {
-                id: true,
-                createdAt: true,
+              include: {
                 message: {
-                  select: {
-                    message: true,
-                    createdAt: true,
-                    seen: true,
-                  },
                   orderBy: {
                     createdAt: "desc",
                   },
@@ -80,11 +74,17 @@ export const onGetDomainChatRooms = async (id: string) => {
         },
       },
     });
-    if (domains) {
-      return domains;
+
+    if (domain) {
+      return domain;
+    } else {
+      console.log("No domain found with ID:", id);
+      return { customer: [] };
     }
   } catch (error) {
-    console.log(error);
+    console.error("Error in onGetDomainChatRooms:", error);
+    // Return a safe default instead of throwing the error
+    return { customer: [] };
   }
 };
 
@@ -103,20 +103,23 @@ export const onGetChatMessages = async (id: string) => {
             role: true,
             message: true,
             createdAt: true,
-            seen: true,
+            //  seen: true, // This is the problem!
           },
           orderBy: {
-            createdAt: "desc",
+            createdAt: "asc",
           },
         },
       },
     });
 
+    console.log("Messages retrieved:", messages ? messages.message.length : 0);
+
     if (messages) {
-      return messages;
+      return messages ? [messages] : [];
     }
   } catch (error) {
-    console.log(error);
+    console.error("Error getting chat messages:", error);
+    return { messages: [] };
   }
 };
 
@@ -171,7 +174,7 @@ export const onOwnerSendMessage = async (
             role: true,
             message: true,
             createdAt: true,
-            seen: true,
+            //  seen: true,
           },
           orderBy: {
             createdAt: "desc",

@@ -7,7 +7,8 @@ import Link from "next/link";
 
 type Props = {
   message: {
-    role: "user" | "assistant";
+    //role: "user" | "assistant";
+    role: string;
     content: string;
     link?: string;
   };
@@ -17,31 +18,37 @@ type Props = {
 const Bubble = ({ message, createdAt }: Props) => {
   const d = new Date();
   const image = extractUUIDFromString(message.content);
+
+  // Set alignment based on the role.
+  const alignmentClass =
+    message.role === "user"
+      ? "self-end flex-row-reverse" // Align user messages to the left
+      : "self-start"; // Align assistant and owner messages to the right
+
+  // Define avatar based on the role
+  const avatarContent =
+    message.role === "assistant" || message.role === "OWNER" ? (
+      <Avatar className="w-5 h-5">
+        <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+        <AvatarFallback>CN</AvatarFallback>
+      </Avatar>
+    ) : (
+      <Avatar className="w-5 h-5">
+        <AvatarFallback>
+          <User />
+        </AvatarFallback>
+      </Avatar>
+    );
+
   return (
-    <div
-      className={cn(
-        "flex gap-2 items-end",
-        message.role == "assistant" ? "self-start" : "self-end flex-row-reverse"
-      )}
-    >
-      {message.role == "assistant" ? (
-        <Avatar className="w-5 h-5">
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-      ) : (
-        <Avatar className="w-5 h-5">
-          <AvatarFallback>
-            <User />
-          </AvatarFallback>
-        </Avatar>
-      )}
+    <div className={cn("flex gap-2 items-end", alignmentClass)}>
+      {avatarContent}
       <div
         className={cn(
           "flex flex-col gap-3 min-w-[200px] max-w-[300px] p-4 rounded-t-md",
-          message.role == "assistant"
-            ? "bg-gray-200 rounded-r-md"
-            : "bg-orange-200 rounded-l-md"
+          message.role === "OWNER" || message.role === "assistant"
+            ? "bg-gray-200 rounded-r-md" // Gray bubble for assistant and owner
+            : "bg-orange-200 rounded-l-md" // Orange bubble for user
         )}
       >
         {createdAt ? (

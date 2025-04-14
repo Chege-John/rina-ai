@@ -19,6 +19,9 @@ const Messenger = (props: Props) => {
     onHandleSentMessage,
     register,
   } = useChatWindow();
+
+  console.log("Current chat room:", chatRoom);
+  console.log("Chats:", chats);
   return (
     <div className="flex-1 flex flex-col h-0 relative">
       <div className="flex-1 h-0 w-full flex flex-col">

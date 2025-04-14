@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from "react";
 import BreadCrumb from "./bread-crumb";
 import { Card } from "../ui/card";
 import { Headphones, Star, Trash } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-type Props = {};
+type Props = object;
 
 const InfoBar = (props: Props) => {
   return (

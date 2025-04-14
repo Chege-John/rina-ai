@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -14,7 +15,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 export const onStoreConversations = async (
   id: string,
   message: string,
-  role: "assistant" | "user"
+  role: "assistant" | "user" | "owner"
 ) => {
   console.log(id, ": ", message);
   await prisma.chatRoom.update({
@@ -25,7 +26,7 @@ export const onStoreConversations = async (
       message: {
         create: {
           message,
-          role,
+          role: role === "assistant" ? "OWNER" : "CUSTOMER",
         },
       },
     },
@@ -80,10 +81,6 @@ export const onGetCurrentChatBot = async (id: string) => {
     return chatbot;
   } catch (error) {
     console.error("❌ Error fetching chatbot:", error);
-    console.error("Error details:", error.message);
-    if (error.code) {
-      console.error("Prisma error code:", error.code);
-    }
     return null;
   }
 };
@@ -92,7 +89,7 @@ let customerEmail: string | undefined;
 
 export const onAiChatBotAssistant = async (
   id: string,
-  chat: { role: "assistant" | "user"; content: string },
+  chat: { role: "assistant" | "user"; content: string; link?: string },
   author: "user" = "user",
   message: string
 ) => {
@@ -154,7 +151,7 @@ export const onAiChatBotAssistant = async (
             id,
           },
           select: {
-            User: {
+            user: {
               select: {
                 clerkId: true,
               },
@@ -227,10 +224,16 @@ export const onAiChatBotAssistant = async (
             message,
             author
           );
+          onRealTimeChat(
+            checkCustomer.customer[0].chatRoom[0].id,
+            message,
+            "user",
+            author
+          );
 
           if (!checkCustomer.customer[0].chatRoom[0].mailed) {
             const user = await clerkClient.users.getUser(
-              checkCustomer.User?.clerkId!
+              checkCustomer.user?.clerkId!
             );
             onMailer(user.emailAddresses[0].emailAddress);
 

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { onAiChatBotAssistant, onGetCurrentChatBot } from "@/actions/bot";
 import { postToParent, pusherClient } from "@/lib/utils";
 import {
@@ -15,7 +17,7 @@ const upload = new UploadClient({
 
 // Define types
 interface ChatMessage {
-  role: "assistant" | "user";
+  role: "assistant" | "owner";
   content: string;
   link?: string;
 }
@@ -35,7 +37,7 @@ export const useChatBot = () => {
   const [currentBot, setCurrentBot] = useState<
     | {
         name: string;
-        chatBot: {
+        chatbot: {
           id: string;
           icon: string | null;
           welcomeMessage: string | null;
@@ -84,7 +86,7 @@ export const useChatBot = () => {
     postToParent(
       JSON.stringify({
         width: botOpened ? 550 : 80,
-        height: botOpened ? 800 : 80,
+        height: botOpened ? 730 : 730,
       })
     );
   }, [botOpened]);
@@ -107,81 +109,6 @@ export const useChatBot = () => {
     return () => window.removeEventListener("message", messageHandler);
   }, []);
 
-  {
-    /*const onGetDomainChatBot = async (id: string) => {
-    console.log("👾 Debug: Function onGetCurrentChatBot is being called.", id);
-
-    try {
-      setCurrentBotId(id);
-      const chatbot = await onGetCurrentChatBot(id);
-
-      console.log("🌐 Chatbot data returned from server:", chatbot);
-
-      if (chatbot) {
-        setOnChats((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content:
-              chatbot.chatBot?.welcomeMessage ||
-              "Welcome! How can I help you today?",
-          },
-        ]);
-        setCurrentBot(chatbot);
-      } else {
-        console.warn(
-          "⚠️ No chatbot data returned - using default configuration"
-        );
-        // Set a default bot if the API returned null
-        const defaultBot = {
-          name: "Assistant",
-          chatBot: {
-            id: "default",
-            icon: null,
-            welcomeMessage: "Welcome! How can I help you today?",
-            background: "#ffffff", // orange-500
-            textColor: "#000000",
-            helpdesk: null,
-          },
-          helpdesk: [],
-        };
-
-        setCurrentBot(defaultBot);
-        setOnChats((prev) => [
-          ...prev,
-          { role: "assistant", content: "Welcome! How can I help you today?" },
-        ]);
-      }
-    } catch (error) {
-      console.error("❌ Error in onGetDomainChatBot:", error);
-      // Same default bot on error
-      const defaultBot = {
-        name: "Assistant",
-        chatBot: {
-          id: "default",
-          icon: null,
-          welcomeMessage: "Sorry, I encountered an error. How can I help you?",
-          background: "#f97316",
-          textColor: "#ffffff",
-          helpdesk: null,
-        },
-        helpdesk: [],
-      };
-
-      setCurrentBot(defaultBot);
-      setOnChats((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: "Sorry, I encountered an error. How can I help you?",
-        },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };*/
-  }
-
   const onGetDomainChatBot = async (id: string) => {
     try {
       setCurrentBotId(id);
@@ -195,7 +122,7 @@ export const useChatBot = () => {
           {
             role: "assistant",
             content:
-              chatbot.chatbot.welcomeMessage ||
+              chatbot.chatbot.welcomeMessage ??
               "Welcome! How can I help you today?",
           },
         ]);
@@ -242,82 +169,9 @@ export const useChatBot = () => {
     }
   };
 
-  {
-    /*const onStartChatting = handleSubmit(async (values) => {
-    console.log("onStartChatting called with:", values);
-    reset();
-    if (values.image.length) {
-      const uploaded = await upload.uploadFile(values.image[0]);
-      setOnChats((prev: any) => [
-        ...prev,
-        { role: "user", content: uploaded.uuid },
-      ]);
-      setOnAiTyping(true);
-      const response = await onAiChatBotAssistant(
-        currentBotId!,
-        onChats,
-        "user",
-        uploaded.uuid
-      );
-      console.log("Response:", response);
-      if (response) {
-        setOnAiTyping(false);
-        if (response.live) {
-          setOnRealTime((prev) => ({
-            ...prev,
-            chatroom: response.chatRoom,
-            mode: response.live,
-          }));
-        } else {
-          setOnChats((prev: any) => [...prev, response.response]);
-        }
-      }
-    }
-
-    if (values.content) {
-      setOnChats((prev: any) => [
-        ...prev,
-        { role: "user", content: values.content },
-      ]);
-      setOnAiTyping(true);
-
-      console.log("Calling onAiChatBotAssistant with:", {
-        currentBotId,
-        onChats,
-        role: "user",
-        content: values.content,
-      });
-
-      const response = await onAiChatBotAssistant(
-        currentBotId!,
-        onChats,
-        "user",
-        values.content
-      );
-      console.log("Response from onAiChatBotAssistant:", response);
-
-      if (response) {
-        setOnAiTyping(false);
-        if (response.live) {
-          setOnRealTime((prev) => ({
-            ...prev,
-            chatroom: response.chatRoom,
-            mode: response.live,
-          }));
-        } else {
-          setOnChats((prev: any) => [...prev, response.response]);
-        }
-      } else {
-        console.log("No response received from onAiChatBotAssistant");
-        setOnAiTyping(false); // Reset typing state even if no response
-      }
-    }
-  });*/
-  }
-
   const onStartChatting = async (values: ChatBotMessageProps) => {
     console.log("DEBUG: onStartChatting triggered with values:", values);
-    reset();
+
     if (values.content) {
       console.log("DEBUG: Processing content:", values.content);
       setOnChats((prev) => [
@@ -327,6 +181,7 @@ export const useChatBot = () => {
           content: values.content ?? "User sent an empty message",
         },
       ]);
+
       setOnAiTyping(true);
       console.log("DEBUG: Before calling onAiChatBotAssistant");
       console.log(
@@ -346,7 +201,7 @@ export const useChatBot = () => {
           const response = await Promise.race([
             onAiChatBotAssistant(currentBotId, onChats, "user", values.content),
             new Promise((_, reject) =>
-              setTimeout(() => reject(new Error("Request timed out")), 10000)
+              setTimeout(() => reject(new Error("Request timed out")), 15000)
             ),
           ]);
           console.log("DEBUG: Response:", response);
@@ -373,6 +228,7 @@ export const useChatBot = () => {
             { role: "assistant", content: "Sorry, something went wrong!" },
           ]);
         }
+        reset();
       } catch (error) {
         console.error("DEBUG: Error in onAiChatBotAssistant:", error); // Log the error object
         setOnAiTyping(false);
@@ -399,14 +255,12 @@ export const useChatBot = () => {
   };
 };
 
-{
-  /*
-  export const useRealTime = (
+export const useRealTime = (
   chatRoom: string,
   setChats: React.Dispatch<
     React.SetStateAction<
       {
-        role: "assistant" | "user";
+        role: "assistant" | "user" | "owner";
         content: string;
         link?: string | undefined;
       }[]
@@ -416,12 +270,16 @@ export const useChatBot = () => {
   useEffect(() => {
     pusherClient.subscribe(chatRoom);
     pusherClient.bind("realtime-mode", (data: any) => {
-      setChats((prev) => [
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setChats((prev: any) => [
         ...prev,
-        { role: data.chat.role, content: data.chat.message },
+        {
+          role: data.chat.role,
+          content: data.chat.message,
+        },
       ]);
     });
+
     return () => pusherClient.unsubscribe("realtime-mode");
   }, []);
-};*/
-}
+};

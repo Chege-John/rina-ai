@@ -52,15 +52,15 @@ const ConversationMenu = ({ domains }: Props) => {
           </div>
         </TabsContent>
         <TabsContent value="all">
-          <Separator orientation="horizontal" className="mt-5" />
+          <Separator orientation="horizontal" className="mt-5 bg-gray-200" />
           all
         </TabsContent>
         <TabsContent value="expired">
-          <Separator orientation="horizontal" className="mt-5" />
+          <Separator orientation="horizontal" className="mt-5 bg-gray-200" />
           expired
         </TabsContent>
         <TabsContent value="starred">
-          <Separator orientation="horizontal" className="mt-5" />
+          <Separator orientation="horizontal" className="mt-5 bg-gray-200" />
           starred
         </TabsContent>
       </TabsMenu>

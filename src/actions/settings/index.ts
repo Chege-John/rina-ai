@@ -2,6 +2,7 @@
 
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+// import { connect } from "http2";
 
 export const onIntegrateDomain = async (domain: string, icon: string) => {
   const user = await currentUser();
@@ -519,6 +520,68 @@ export const onGetAllFilterQuestions = async (id: string) => {
       status: 500,
       message: "Internal server error while fetching questions",
       questions: [],
+    };
+  }
+};
+
+export const onGetPaymentConnected = async () => {
+  try {
+    const user = await currentUser();
+    if (user) {
+      const connected = await prisma.user.findUnique({
+        where: {
+          clerkId: user.id,
+        },
+        select: {
+          stripeId: true,
+        },
+      });
+      if (connected) {
+        return connected.stripeId;
+      } else {
+        console.error("no stripe id found for this user.");
+      }
+    }
+  } catch (error) {
+    console.log("Error fetching user or Stripe ID:", error);
+  }
+};
+
+export const onCreateNewDomainProduct = async (
+  id: string,
+  name: string,
+  image: string,
+  price: number
+) => {
+  try {
+    const product = await prisma.domain.update({
+      where: {
+        id,
+      },
+      data: {
+        products: {
+          create: {
+            name,
+            image,
+            price,
+          },
+        },
+      },
+    });
+
+    if (product) {
+      return {
+        status: 200,
+        message: "Product created successfully",
+        product: product,
+      };
+    }
+  } catch (error) {
+    console.error("Error creating product:", error);
+    return {
+      status: 500,
+      message: "Internal server error while creating product",
+      product: null,
     };
   }
 };

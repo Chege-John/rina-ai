@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from "zod";
 
 export const MAX_UPLOAD_SIZE = 2 * 1024 * 1024; // 2MB in bytes
@@ -12,6 +13,12 @@ export type DomainSettingsProps = {
 export type HelpDeskQuestionsProps = {
   question: string;
   answer: string;
+};
+
+export type AddProductProps = {
+  name: string;
+  image: any;
+  price: string;
 };
 
 export type FilterQuestionsProps = {

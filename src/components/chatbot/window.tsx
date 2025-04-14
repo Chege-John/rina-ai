@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChatBotMessageProps } from "@/schemas/conversation.schema";
 import React, { forwardRef } from "react";
 import { UseFormRegister } from "react-hook-form";
@@ -6,20 +8,23 @@ import RealTimeMode from "./real-time";
 import Image from "next/image";
 import TabsMenu from "../tabs";
 import { BOT_TABS_MENU } from "@/constants/menu";
-import { Paperclip, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { Separator } from "../ui/separator";
 import Bubble from "./bubble";
 import { Responding } from "./responding";
 import { Button } from "../ui/button";
-import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { CardDescription, CardTitle } from "../ui/card";
 import Accordion from "../accordian";
 
 type Props = {
   register: UseFormRegister<ChatBotMessageProps>;
-  chats: { role: "assistant" | "user"; content: string; link?: string }[];
+  chats: {
+    role: "assistant" | "user" | "owner";
+    content: string;
+    link?: string;
+  }[];
   onChat(): void;
   onResponding: boolean;
   domainName: string;
@@ -41,7 +46,7 @@ type Props = {
   setChat: React.Dispatch<
     React.SetStateAction<
       {
-        role: "assistant" | "user";
+        role: "assistant" | "user" | "owner";
         content: string;
         link?: string | undefined;
       }[]
@@ -69,7 +74,7 @@ const BotWindow = forwardRef<HTMLDivElement, Props>(
     return (
       <div
         className="h-[670px] w-[450px] flex flex-col bg-white 
-    rounded-xl mr-[80px] border-[1px] overflow-hidden"
+    rounded-xl mr-[80px] border-[1px] overflow-hidden z-[9999]"
       >
         <div className="flex justify-between px-4 pt-4">
           <div className="flex gap-2">
@@ -164,6 +169,9 @@ const BotWindow = forwardRef<HTMLDivElement, Props>(
             </div>
           </TabsContent>
         </TabsMenu>
+        <div className="flex justify-center py-1">
+          <p className="text-gray-500 text-xs">Powered by Rina-Ai</p>
+        </div>
       </div>
     );
   }
