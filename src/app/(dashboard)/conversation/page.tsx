@@ -5,9 +5,9 @@ import InfoBar from "@/components/infobar";
 import { Separator } from "@/components/ui/separator";
 import React from "react";
 
-type Props = {};
+// type Props = {};
 
-const ConversationPage = async (props: Props) => {
+const ConversationPage = async () => {
   const domains = await onGetAllAccountDomains();
   return (
     <div className="w-full h-full flex">

@@ -51,10 +51,10 @@ const PortalSteps = ({
   slot,
   loading,
   bookings,
-  products,
-  amount,
-  stripeId,
-}: Props) => {
+}: // products,
+// amount,
+// stripeId,
+Props) => {
   if (step == 1) {
     return (
       <QuestionsForm

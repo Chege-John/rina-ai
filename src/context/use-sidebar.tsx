@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useChatContext } from "./user-chat-context";
 import { toast } from "@/components/ui/toast";
 import {
@@ -19,7 +19,7 @@ const useSideBar = () => {
 
   const { chatRoom } = useChatContext();
 
-  const onActivateRealtime = async (e: any) => {
+  const onActivateRealtime = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
       const realtime = await onToggleRealtime(
         chatRoom!,
@@ -37,20 +37,20 @@ const useSideBar = () => {
     }
   };
 
-  const onGetCurrentMode = async () => {
+  const onGetCurrentMode = useCallback(async () => {
     setLoading(true);
     const mode = await onGetConversationMode(chatRoom!);
     if (mode) {
       setRealtime(mode.live);
-      setLoading(false);
     }
-  };
+    setLoading(false);
+  }, [chatRoom]);
 
   useEffect(() => {
     if (chatRoom) {
       onGetCurrentMode();
     }
-  }, [chatRoom]);
+  }, [chatRoom, onGetCurrentMode]);
 
   const page = pathname.split("/").pop();
   const { signOut } = useClerk();

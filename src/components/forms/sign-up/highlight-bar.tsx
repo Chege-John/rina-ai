@@ -4,9 +4,9 @@ import { useAuthContextHook } from "@/context/use-auth-context";
 import { cn } from "@/lib/utils";
 import React from "react";
 
-type Props = {};
+// type Props = {};
 
-const HighlightBar = (props: Props) => {
+const HighlightBar = () => {
   const { currentStep } = useAuthContextHook();
 
   return (

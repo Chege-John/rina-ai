@@ -81,11 +81,13 @@ export const onBookNewAppointment = async (
 };
 
 export const saveAnswers = async (
-  questions: [question: string],
+  questions: Record<string, string>, // Expecting a Record object, not a tuple
   customerId: string
 ) => {
   try {
-    for (const question in questions) {
+    // Iterate through the questions object
+    for (const questionId in questions) {
+      // Ensure questionId is a valid key and questions[questionId] contains the answer
       await prisma.customer.update({
         where: {
           id: customerId,
@@ -94,19 +96,21 @@ export const saveAnswers = async (
           questions: {
             update: {
               where: {
-                id: question,
+                id: questionId, // Use questionId as key
               },
               data: {
-                answered: questions[question],
+                answered: questions[questionId], // Assign the corresponding answer
               },
             },
           },
         },
       });
     }
+
     return { status: 200, message: "Answers saved successfully" };
   } catch (error) {
     console.log(error);
+    throw new Error("Error saving answers");
   }
 };
 

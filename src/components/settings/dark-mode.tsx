@@ -7,9 +7,9 @@ import { LightMode } from "../themes-ui/light-mode";
 import { SystemMode } from "../themes-ui/dark-mode";
 import { DarkMode } from "../themes-ui/system-mode";
 
-type Props = {};
+// type Props = {};
 
-const DarkModetoggle = (props: Props) => {
+const DarkModetoggle = () => {
   const { setTheme, theme } = useThemeMode();
   const [clientTheme, setClientTheme] = useState<string | undefined>(undefined);
 

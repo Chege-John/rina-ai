@@ -12,7 +12,7 @@ import React from "react";
 import FormGenerator from "../form-generator";
 import { Button } from "@/components/ui/button";
 import { Loader } from "@/components/loader";
-import Accordion from "@/components/accordian";
+// import Accordion from "@/components/accordian";
 
 type Props = {
   id: string;

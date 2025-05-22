@@ -18,9 +18,9 @@ const OTPForm = dynamic(() => import("./otp-form"), {
   loading: () => <Spinner />, // Correctly specify the loading component
 });
 
-type Props = {};
+// type Props = {};
 
-const RegistrationFormStep = (props: Props) => {
+const RegistrationFormStep = () => {
   const {
     register,
     formState: { errors },

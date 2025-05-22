@@ -6,7 +6,7 @@ import { Edit } from "lucide-react";
 import { ErrorMessage } from "@hookform/error-message";
 
 type Props = {
-  register: UseFormRegister<any>;
+  register: UseFormRegister<FieldValues>;
   errors: FieldErrors<FieldValues>;
   label: string;
 };

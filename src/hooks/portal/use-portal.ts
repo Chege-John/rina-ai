@@ -3,6 +3,7 @@ import { toast } from "@/components/ui/toast";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+// Updated usePortal hook
 export const usePortal = (
   customerId: string,
   domainId: string,
@@ -14,6 +15,7 @@ export const usePortal = (
     formState: { errors },
     handleSubmit,
   } = useForm();
+
   const [step, setStep] = useState<number>(2);
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
@@ -27,16 +29,20 @@ export const usePortal = (
   const onBookingAppointment = handleSubmit(async (values) => {
     try {
       setLoading(true);
+
+      // Prepare questions as an object with keys and answers
       const questions = Object.keys(values)
         .filter((key) => key.startsWith("question"))
-        .reduce((obj: any, key) => {
+        .reduce((obj: Record<string, string>, key) => {
           obj[key.split("question-")[1]] = values[key];
           return obj;
         }, {});
 
-      const savedAnswsers = await saveAnswers(questions, customerId);
+      // Save the answers using the updated saveAnswers function
+      const savedAnswers = await saveAnswers(questions, customerId);
 
-      if (savedAnswsers) {
+      if (savedAnswers) {
+        // Book appointment after saving answers
         const booked = await onBookNewAppointment(
           domainId,
           customerId,
@@ -51,7 +57,7 @@ export const usePortal = (
             title: "Success",
             description: booked.message,
           });
-          setStep(3);
+          setStep(3); // Go to next step
         }
         setLoading(false);
       }

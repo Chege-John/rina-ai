@@ -5,9 +5,9 @@ import { Card, CardContent, CardDescription } from "../ui/card";
 import { CheckCircle2, Plus } from "lucide-react";
 import { pricingCards } from "@/constants/landing-page";
 
-type Props = {};
+// type Props = {};
 
-const BillingSettings = async (props: Props) => {
+const BillingSettings = async () => {
   //WIP:Add stripe subscription form.
   const plan = await onGetSubscriptionPlan();
 

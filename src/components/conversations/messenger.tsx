@@ -8,9 +8,9 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { PaperclipIcon } from "lucide-react";
 
-type Props = {};
+// type Props = {};
 
-const Messenger = (props: Props) => {
+const Messenger = () => {
   const {
     messageWindowRef,
     chats,
