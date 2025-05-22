@@ -13,8 +13,18 @@ import {
   ConversationSearchProps,
 } from "@/schemas/conversation.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+
+interface RealtimeData {
+  chat: {
+    id: string;
+    message: string;
+    createdAt: Date;
+    role: "assistant" | "user" | null; // Add this
+    seen: boolean; // Add this
+  };
+}
 
 export const useConversation = () => {
   const { register, watch } = useForm<ConversationSearchProps>({
@@ -92,7 +102,7 @@ export const useChatTime = (createdAt: Date, roomId: string) => {
   const [messageSentAt, setMessageSentAt] = useState<string>();
   const [urgent, setUrgent] = useState<boolean>(false);
 
-  const onSetMessageReceivedDate = () => {
+  const onSetMessageReceivedDate = useCallback(() => {
     const dt = new Date(createdAt);
     const current = new Date();
     const currentDate = current.getDate();
@@ -110,14 +120,14 @@ export const useChatTime = (createdAt: Date, roomId: string) => {
     } else {
       setMessageSentAt(`${date} ${getMonthName(month)}`);
     }
-  };
+  }, [createdAt]);
 
-  const onSeenChat = async () => {
-    if (chatRoom == roomId && urgent) {
+  const onSeenChat = useCallback(async () => {
+    if (chatRoom === roomId && urgent) {
       await onViewUnReadMessages(roomId);
       setUrgent(false);
     }
-  };
+  }, [chatRoom, roomId, urgent]);
 
   useEffect(() => {
     onSeenChat();
@@ -155,12 +165,12 @@ export const useChatWindow = () => {
   useEffect(() => {
     if (chatRoom) {
       pusherClient.subscribe(chatRoom);
-      pusherClient.bind("realtime-mode", (data: any) => {
+      pusherClient.bind("realtime-mode", (data: RealtimeData) => {
         setChats((prev) => [...prev, data.chat]);
       });
       return () => pusherClient.unsubscribe("realtime-mode");
     }
-  }, [chatRoom]);
+  }, [chatRoom, setChats]);
 
   const onHandleSentMessage = handleSubmit(async (values) => {
     try {
