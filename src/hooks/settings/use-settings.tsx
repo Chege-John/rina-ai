@@ -4,7 +4,7 @@ import {
   onCreateHelpDeskQuestion,
   onCreateNewDomainProduct,
   onDeleteUserDomain,
-  onGetAllFilterQuestions,
+  // onGetAllFilterQuestions,
   onGetAllHelpDeskQuestions,
   onUpdateDomain,
   onUpdatePassword,
@@ -29,7 +29,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UploadClient } from "@uploadcare/upload-client";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 const upload = new UploadClient({
@@ -226,16 +226,13 @@ export const useHelpDesk = (id: string) => {
     }
   });
 
-  const onGetQuestions = async () => {
+  const onGetQuestions = useCallback(async () => {
     try {
       setLoading(true);
       const questions = await onGetAllHelpDeskQuestions(id);
-
-      // Validate response
       if (!questions || typeof questions !== "object") {
         throw new Error("Invalid questions response");
       }
-
       setIsQuestions(questions.questions || []);
     } catch (error) {
       console.error("Fetch questions error:", error);
@@ -243,11 +240,11 @@ export const useHelpDesk = (id: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     onGetQuestions();
-  }, []);
+  }, [onGetQuestions]);
 
   return {
     register,
@@ -287,18 +284,25 @@ export const useFilterQuestions = (id: string) => {
     }
   });
 
-  const onGetQuestions = async () => {
-    setLoading(true);
-    const questions = await onGetAllFilterQuestions(id);
-    if (questions) {
-      setIsQuestions(questions.questions!);
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const onGetQuestions = async () => {
+      try {
+        setLoading(true);
+        const questions = await onGetAllHelpDeskQuestions(id);
+        if (!questions || typeof questions !== "object") {
+          throw new Error("Invalid questions response");
+        }
+        setIsQuestions(questions.questions || []);
+      } catch (error) {
+        console.error("Fetch questions error:", error);
+        setIsQuestions([]); // Fallback to empty array
+      } finally {
+        setLoading(false);
+      }
+    };
+
     onGetQuestions();
-  }, []);
+  }, [id]); // Include `id` if it's part of the state and may change
 
   return {
     register,

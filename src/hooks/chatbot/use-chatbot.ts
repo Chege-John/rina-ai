@@ -122,7 +122,7 @@ export const useChatBot = () => {
           {
             role: "assistant",
             content:
-              chatbot.chatbot.welcomeMessage ??
+              chatbot?.chatbot?.welcomeMessage ??
               "Welcome! How can I help you today?",
           },
         ]);
@@ -270,7 +270,6 @@ export const useRealTime = (
   useEffect(() => {
     pusherClient.subscribe(chatRoom);
     pusherClient.bind("realtime-mode", (data: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setChats((prev: any) => [
         ...prev,
         {
@@ -281,5 +280,5 @@ export const useRealTime = (
     });
 
     return () => pusherClient.unsubscribe("realtime-mode");
-  }, []);
+  }, [chatRoom, setChats]);
 };

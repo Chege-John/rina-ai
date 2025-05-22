@@ -16,14 +16,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
-interface RealtimeData {
-  chat: {
-    id: string;
-    message: string;
-    createdAt: Date;
-  };
-}
-
 export const useConversation = () => {
   const { register, watch } = useForm<ConversationSearchProps>({
     resolver: zodResolver(ConversationSearchSchema),
@@ -45,7 +37,6 @@ export const useConversation = () => {
     }[]
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
-
   useEffect(() => {
     const search = watch(async (value) => {
       console.log("Domain ID being sent to backend:", value.domain);
@@ -58,7 +49,7 @@ export const useConversation = () => {
         if (rooms && rooms.customer) {
           setChatRooms(rooms.customer);
         } else {
-          setChatRooms([]);
+          setChatRooms([]); // Set to empty array if no rooms found
           console.log("No chat rooms found for domain:");
         }
       } catch (error) {
@@ -88,7 +79,6 @@ export const useConversation = () => {
       setChats([]);
     }
   };
-
   return {
     register,
     loading,
@@ -123,7 +113,7 @@ export const useChatTime = (createdAt: Date, roomId: string) => {
   };
 
   const onSeenChat = async () => {
-    if (chatRoom === roomId && urgent) {
+    if (chatRoom == roomId && urgent) {
       await onViewUnReadMessages(roomId);
       setUrgent(false);
     }
@@ -135,7 +125,7 @@ export const useChatTime = (createdAt: Date, roomId: string) => {
 
   useEffect(() => {
     onSetMessageReceivedDate();
-  }, [createdAt]);
+  }, [createdAt, onSetMessageReceivedDate, roomId]);
 
   return {
     messageSentAt,
@@ -151,7 +141,6 @@ export const useChatWindow = () => {
     resolver: zodResolver(ChatBotMessageSchema),
     mode: "onChange",
   });
-
   const onScrollToBottom = () => {
     messageWindowRef.current?.scroll({
       top: messageWindowRef.current.scrollHeight,
@@ -159,7 +148,6 @@ export const useChatWindow = () => {
       behavior: "smooth",
     });
   };
-
   useEffect(() => {
     onScrollToBottom();
   }, [chats, messageWindowRef]);
@@ -167,12 +155,12 @@ export const useChatWindow = () => {
   useEffect(() => {
     if (chatRoom) {
       pusherClient.subscribe(chatRoom);
-      pusherClient.bind("realtime-mode", (data: RealtimeData) => {
+      pusherClient.bind("realtime-mode", (data: any) => {
         setChats((prev) => [...prev, data.chat]);
       });
       return () => pusherClient.unsubscribe("realtime-mode");
     }
-  }, [chatRoom, setChats]);
+  }, [chatRoom]);
 
   const onHandleSentMessage = handleSubmit(async (values) => {
     try {
@@ -189,13 +177,11 @@ export const useChatWindow = () => {
           message.message[0].id,
           "assistant"
         );
-        reset();
       }
     } catch (error) {
       console.log(error);
     }
   });
-
   return {
     messageWindowRef,
     chats,

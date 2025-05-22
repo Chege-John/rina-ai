@@ -56,11 +56,12 @@ const PortalForm = ({
     loading,
   } = usePortal(customerId, domainId, email);
 
+  // useEffect hook updated with proper dependencies
   useEffect(() => {
     if (questions.every((question) => question.answered)) {
       onNext();
     }
-  }, []);
+  }, [questions, onNext]);
 
   return (
     <form
@@ -69,7 +70,7 @@ const PortalForm = ({
     >
       <PortalSteps
         loading={loading}
-        slot={selectedSlot}
+        slot={selectedSlot ?? undefined} // Handle null case here
         bookings={bookings}
         onSlot={onSelectedTimeSlot}
         date={date}
