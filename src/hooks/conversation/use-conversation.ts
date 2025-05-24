@@ -187,11 +187,13 @@ export const useChatWindow = () => {
           message.message[0].id,
           "assistant"
         );
+        reset();
       }
     } catch (error) {
       console.log(error);
     }
   });
+
   return {
     messageWindowRef,
     chats,
