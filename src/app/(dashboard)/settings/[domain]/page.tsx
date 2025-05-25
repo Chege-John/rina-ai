@@ -9,9 +9,10 @@ import React from "react";
 export default async function DomainSettingsPage({
   params,
 }: {
-  params: { domain: string };
+  params: Promise<{ domain: string }>;
 }) {
-  const domain = await onGetCurrentDomainInfo(params.domain);
+  const { domain: domainParam } = await params;
+  const domain = await onGetCurrentDomainInfo(domainParam);
   if (!domain) redirect("/dashboard");
 
   return (
