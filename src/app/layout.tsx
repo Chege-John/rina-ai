@@ -16,13 +16,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={jakarta.className}>
+    <html lang="en" className="light" style={{ colorScheme: "light" }}>
+      <head />
+      <body className={jakarta.className}>
+        <ClerkProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
@@ -31,8 +30,8 @@ export default function RootLayout({
             {children}
             <Toaster />
           </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }

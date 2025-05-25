@@ -298,7 +298,10 @@ export const onAiChatBotAssistant = async (
                                   Always maintain character and stay respectful.
                                   
                                   The array of questions : [${chatBotDomain.filterQuestions
-                                    .map((questions) => questions.question)
+                                    .map(
+                                      (questions: { question: unknown }) =>
+                                        questions.question
+                                    )
                                     .join(", ")}]
 
                                    if the customer says something out of context or inappropriate.
