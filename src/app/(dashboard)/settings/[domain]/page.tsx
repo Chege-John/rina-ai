@@ -6,11 +6,11 @@ import ProductTable from "@/components/products";
 import { redirect } from "next/navigation";
 import React from "react";
 
-const DomainSettingsPage = async ({
+export default async function DomainSettingsPage({
   params,
 }: {
   params: { domain: string };
-}) => {
+}) {
   const domain = await onGetCurrentDomainInfo(params.domain);
   if (!domain) redirect("/dashboard");
 
@@ -29,6 +29,4 @@ const DomainSettingsPage = async ({
       </div>
     </>
   );
-};
-
-export default DomainSettingsPage;
+}
