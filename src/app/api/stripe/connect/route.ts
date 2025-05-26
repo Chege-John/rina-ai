@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET!, {
-  apiVersion: "2025-03-31.basil",
+  apiVersion: "2025-04-30.basil",
   typescript: true,
 });
 
