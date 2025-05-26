@@ -117,6 +117,7 @@ message        String
 role           Role?
 createdAt      DateTime @default(now())
 updatedAt      DateTime @updatedAt
+seen           Boolean   @default(false)
 ChatRoom       ChatRoom? @relation(fields: [chatRoomId], references: [id], onDelete: Cascade)
 chatRoomId     String?  @db.Uuid
 }
@@ -154,7 +155,6 @@ enum BookingStatus {
   CANCELLED
   COMPLETED
 }
-
 
 enum  Plans {
   STANDARD
