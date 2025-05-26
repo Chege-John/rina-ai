@@ -41,6 +41,9 @@ export const useChatBot = () => {
           id: string;
           icon: string | null;
           welcomeMessage: string | null;
+          background?: string;
+          textColor?: string;
+          helpdesk?: string;
         } | null;
         helpdesk: {
           id: string;
@@ -62,12 +65,12 @@ export const useChatBot = () => {
   >([]);*/
 
   const [onChats, setOnChats] = useState<
-    { role: "assistant" | "user"; content: string; link?: string }[]
+    { role: "assistant" | "user" | "owner"; content: string; link?: string }[]
   >([]);
   const [onAiTyping, setOnAiTyping] = useState<boolean>(false);
   const [currentBotId, setCurrentBotId] = useState<string>();
   const [onRealTime, setOnRealTime] = useState<
-    { chatroom: string; mode: boolean } | undefined
+    { chatroom: string; mode: string } | undefined
   >(undefined);
 
   const onScrollToBottom = () => {
