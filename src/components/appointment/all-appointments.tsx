@@ -8,7 +8,7 @@ import { CardDescription } from "../ui/card";
 type Props = {
   bookings:
     | {
-        Customer: {
+        customer: {
           Domain: {
             name: string;
           } | null;
@@ -49,7 +49,7 @@ const AllAppointments = ({ bookings }: Props) => {
               </div>
             </TableCell>
             <TableCell className="text-right">
-              {booking.Customer?.Domain?.name}
+              {booking.customer?.Domain?.name}
             </TableCell>
           </TableRow>
         ))
