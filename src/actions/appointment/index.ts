@@ -30,21 +30,18 @@ export const onDomainCustomerResponses = async (customerId: string) => {
 
 export const onGetAllDomainBookings = async (domainId: string) => {
   try {
-    const bookings = await prisma.bookings.findMany({
+    const bookings = await prisma.booking.findMany({
       where: {
         domainId,
       },
-      select: {
-        slot: true,
-        date: true,
+      include: {
+        customer: true,
       },
     });
-
-    if (bookings) {
-      return bookings;
-    }
+    return bookings;
   } catch (error) {
     console.log(error);
+    return null;
   }
 };
 
@@ -61,7 +58,7 @@ export const onBookNewAppointment = async (
         id: customerId,
       },
       data: {
-        booking: {
+        bookings: {
           create: {
             domainId,
             slot,
@@ -116,11 +113,11 @@ export const saveAnswers = async (
 
 export const onGetAllBookingsForCurrentUser = async (clerkId: string) => {
   try {
-    const bookings = await prisma.bookings.findMany({
+    const bookings = await prisma.booking.findMany({
       where: {
-        Customer: {
+        customer: {
           Domain: {
-            User: {
+            user: {
               clerkId,
             },
           },
@@ -133,7 +130,8 @@ export const onGetAllBookingsForCurrentUser = async (clerkId: string) => {
         date: true,
         email: true,
         domainId: true,
-        Customer: {
+        customer: {
+          // Changed from 'Customer' to 'customer'
           select: {
             Domain: {
               select: {
