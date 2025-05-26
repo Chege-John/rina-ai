@@ -25,7 +25,7 @@ type Props = {
     content: string;
     link?: string;
   }[];
-  onChat(): void;
+  onChat: (values: ChatBotMessageProps) => Promise<void>; // Fixed: Now accepts parameters
   onResponding: boolean;
   domainName: string;
   theme?: string;
@@ -125,12 +125,12 @@ const BotWindow = forwardRef<HTMLDivElement, Props>(
                 {onResponding && <Responding />}
               </div>
               <form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
                   console.log("DEBUG: Form submitted manually");
-                  const content = (e.target as any).content.value; // Get input value directly
+                  const content = (e.target as any).content.value;
                   console.log("DEBUG: Form content:", content);
-                  onChat({ content }); // Pass values manually
+                  await onChat({ content } as ChatBotMessageProps); // Added await and proper typing
                 }}
                 className="flex px-3 py-1 flex-col flex-1 bg-gray-200"
               >
