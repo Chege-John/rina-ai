@@ -232,7 +232,8 @@ export const onAiChatBotAssistant = async (
           );
 
           if (!checkCustomer.customer[0].chatRoom[0].mailed) {
-            const user = await clerkClient.users.getUser(
+            const clerk = await clerkClient();
+            const user = await clerk.users.getUser(
               checkCustomer.user?.clerkId!
             );
             onMailer(user.emailAddresses[0].emailAddress);
