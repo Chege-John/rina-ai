@@ -6,6 +6,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "../ui/drawer";
+import { JSX } from "react/jsx-runtime";
 
 type Props = {
   onOpen: JSX.Element;
