@@ -162,8 +162,9 @@ enum  Plans {
   ULTIMATE
 }
 
-enum  Role  {
+enum Role {
   OWNER
   CUSTOMER
+  USER       
+  ASSISTANT  
 }
-
