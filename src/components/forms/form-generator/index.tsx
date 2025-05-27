@@ -5,15 +5,15 @@ import { ErrorMessage } from "@hookform/error-message";
 import React from "react";
 import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form";
 
-type Props = {
+type Props<T extends FieldValues = FieldValues> = {
   type: "email" | "password" | "text";
   inputType: "select" | "input" | "textarea";
   options?: { value: string; label: string; id: string }[];
   label?: string;
   placeholder: string;
-  register: UseFormRegister<FieldValues>;
-  name: string;
-  errors: FieldErrors<FieldValues>;
+  register: UseFormRegister<T>;
+  name: keyof T;
+  errors: FieldErrors<T>;
   lines?: number;
   form?: string;
   defaultValue?: string;

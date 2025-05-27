@@ -263,6 +263,9 @@ export const useFilterQuestions = (id: string) => {
     reset,
   } = useForm<FilterQuestionsProps>({
     resolver: zodResolver(FilterQuestionsSchema),
+    defaultValues: {
+      question: "",
+    },
   });
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -270,19 +273,30 @@ export const useFilterQuestions = (id: string) => {
     { id: string; question: string }[]
   >([]);
 
-  const onAddFilterQuestions = handleSubmit(async (values) => {
-    setLoading(true);
-    const questions = await onCreateFilterQuestions(id, values.question);
-    if (questions) {
-      setIsQuestions(questions.questions!);
-      toast({
-        title: questions.status === 200 ? "Success" : "Error",
-        description: questions.message || "An error occurred",
-      });
-      reset();
-      setLoading(false);
+  const onAddFilterQuestions = handleSubmit(
+    async (values: FilterQuestionsProps) => {
+      try {
+        setLoading(true);
+        const questions = await onCreateFilterQuestions(id, values.question);
+        if (questions) {
+          setIsQuestions(questions.questions!);
+          toast({
+            title: questions.status === 200 ? "Success" : "Error",
+            description: questions.message || "An error occurred",
+          });
+          reset();
+        }
+      } catch (error) {
+        console.error("Create filter question error:", error);
+        toast({
+          title: "Error",
+          description: "Failed to create filter question",
+        });
+      } finally {
+        setLoading(false);
+      }
     }
-  });
+  );
 
   useEffect(() => {
     const onGetQuestions = async () => {
@@ -295,14 +309,14 @@ export const useFilterQuestions = (id: string) => {
         setIsQuestions(questions.questions || []);
       } catch (error) {
         console.error("Fetch questions error:", error);
-        setIsQuestions([]); // Fallback to empty array
+        setIsQuestions([]);
       } finally {
         setLoading(false);
       }
     };
 
     onGetQuestions();
-  }, [id]); // Include `id` if it's part of the state and may change
+  }, [id]);
 
   return {
     register,
@@ -324,23 +338,36 @@ export const useProducts = (domainId: string) => {
     resolver: zodResolver(AddProductSchema),
   });
 
-  const onCreateNewProduct = handleSubmit(async (values) => {
+  const onCreateNewProduct = handleSubmit(async (values: AddProductProps) => {
     try {
       setLoading(true);
+
+      // Convert price string to number
+      const priceNumber = parseFloat(values.price);
+
+      // Validate price is a valid number
+      if (isNaN(priceNumber) || priceNumber <= 0) {
+        toast({
+          title: "Error",
+          description: "Please enter a valid price",
+        });
+        return;
+      }
+
       const uploaded = await upload.uploadFile(values.image[0]);
       const product = await onCreateNewDomainProduct(
         domainId,
         values.name,
         uploaded.uuid,
-        values.price
+        priceNumber // Pass the converted number
       );
+
       if (product) {
         reset();
         toast({
           title: product.status === 200 ? "Success" : "Error",
           description: product.message,
         });
-        setLoading(false);
       }
     } catch (error) {
       console.error("Create product error:", error);
