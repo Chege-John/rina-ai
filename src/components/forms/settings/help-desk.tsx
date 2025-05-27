@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Section } from "@/components/section-label";
@@ -33,7 +34,7 @@ const HelpDesk = ({ id }: Props) => {
             />
             <FormGenerator
               errors={errors}
-              register={register}
+              register={register as any}
               name="question"
               type="text"
               inputType="input"
@@ -48,7 +49,7 @@ const HelpDesk = ({ id }: Props) => {
             />
             <FormGenerator
               errors={errors}
-              register={register}
+              register={register as any}
               name="answer"
               type="text"
               inputType="textarea"
