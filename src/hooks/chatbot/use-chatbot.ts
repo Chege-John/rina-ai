@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { onAiChatBotAssistant, onGetCurrentChatBot } from "@/actions/bot";
 import { postToParent, pusherClient } from "@/lib/utils";
@@ -16,8 +15,16 @@ const upload = new UploadClient({
 });
 
 // Define types
+type ChatRole = "assistant" | "user" | "owner";
+
 interface ChatMessage {
-  role: "assistant" | "owner";
+  role: ChatRole;
+  content: string;
+  link?: string;
+}
+
+interface AiChatBotMessage {
+  role: "assistant" | "user";
   content: string;
   link?: string;
 }
@@ -29,7 +36,6 @@ interface AiChatBotResponse {
 }
 
 export const useChatBot = () => {
-  //WIP: Setup Realtime with Pusher
   const { register, handleSubmit, reset } = useForm<ChatBotMessageProps>({
     resolver: zodResolver(ChatBotMessageSchema),
   });
@@ -60,13 +66,7 @@ export const useChatBot = () => {
   const onOpenChatBot = () => setBotOpened((prev) => !prev);
   const [loading, setLoading] = useState<boolean>(true);
 
-  /*const [onChats, setOnChats] = useState<
-    { role: "assistant" | "user"; content: string; link?: string }[]
-  >([]);*/
-
-  const [onChats, setOnChats] = useState<
-    { role: "assistant" | "user" | "owner"; content: string; link?: string }[]
-  >([]);
+  const [onChats, setOnChats] = useState<ChatMessage[]>([]);
   const [onAiTyping, setOnAiTyping] = useState<boolean>(false);
   const [currentBotId, setCurrentBotId] = useState<string>();
   const [onRealTime, setOnRealTime] = useState<
@@ -94,12 +94,9 @@ export const useChatBot = () => {
     );
   }, [botOpened]);
 
-  // let limitRequest = 0;
-
   useEffect(() => {
     let requestMade = false;
     const messageHandler = (e: MessageEvent) => {
-      // ... existing message handler logic ...
       if (typeof e.data === "string" && e.data.match(/^[a-zA-Z0-9-]+$/)) {
         const botid = e.data;
         if (!requestMade) {
@@ -117,7 +114,7 @@ export const useChatBot = () => {
       setCurrentBotId(id);
       const chatbot = await onGetCurrentChatBot(id);
       console.log("🌐 Chatbot data returned from server:", chatbot);
-      console.log("🔍 Chatbot details:", chatbot?.chatbot); // Corrected to lowercase
+      console.log("🔍 Chatbot details:", chatbot?.chatbot);
 
       if (chatbot && chatbot.chatbot) {
         setOnChats((prev) => [
@@ -137,7 +134,6 @@ export const useChatBot = () => {
         const defaultBot = {
           name: "Assistant",
           chatbot: {
-            // Changed to lowercase
             id: "default",
             icon: null,
             welcomeMessage: "Welcome! How can I help you today?",
@@ -155,7 +151,6 @@ export const useChatBot = () => {
       const defaultBot = {
         name: "Assistant",
         chatbot: {
-          // Changed to lowercase
           id: "default",
           icon: null,
           welcomeMessage: "Sorry, I encountered an error. How can I help you?",
@@ -177,13 +172,13 @@ export const useChatBot = () => {
 
     if (values.content) {
       console.log("DEBUG: Processing content:", values.content);
-      setOnChats((prev) => [
-        ...prev,
-        {
-          role: "user",
-          content: values.content ?? "User sent an empty message",
-        },
-      ]);
+
+      const userMessage: AiChatBotMessage = {
+        role: "user",
+        content: values.content ?? "User sent an empty message",
+      };
+
+      setOnChats((prev) => [...prev, userMessage]);
 
       setOnAiTyping(true);
       console.log("DEBUG: Before calling onAiChatBotAssistant");
@@ -201,25 +196,51 @@ export const useChatBot = () => {
       );
       try {
         if (currentBotId) {
+          const filteredChats = onChats.filter(
+            (msg) => msg.role === "assistant" || msg.role === "user"
+          ) as { role: "assistant" | "user"; content: string; link?: string }[];
+
           const response = await Promise.race([
-            onAiChatBotAssistant(currentBotId, onChats, "user", values.content),
+            onAiChatBotAssistant(
+              currentBotId,
+              filteredChats as unknown as {
+                role: "assistant" | "user";
+                content: string;
+                link?: string;
+              },
+              "user",
+              values.content
+            ),
             new Promise((_, reject) =>
               setTimeout(() => reject(new Error("Request timed out")), 15000)
             ),
           ]);
+
           console.log("DEBUG: Response:", response);
           setOnAiTyping(false);
-          if (response) {
-            if (response.live) {
-              setOnRealTime({
-                chatroom: response.chatRoom,
-                mode: response.live,
-              });
-            } else if (response.response) {
-              setOnChats((prev) => [...prev, response.response]);
-            } else {
-              console.log("DEBUG: Response has no valid content");
-            }
+
+          const safeResponse: AiChatBotResponse = response ?? {
+            response: {
+              role: "assistant",
+              content: "Sorry, I couldn't process your request.",
+            },
+          };
+
+          if (safeResponse.live) {
+            setOnRealTime({
+              chatroom: safeResponse.chatRoom ?? "default-chatroom",
+              mode: safeResponse.live.toString(),
+            });
+          } else if (safeResponse.response) {
+            setOnChats((prev) => [
+              ...prev,
+              safeResponse.response as ChatMessage,
+            ]);
+          } else {
+            setOnChats((prev) => [
+              ...prev,
+              { role: "assistant", content: "No response received" },
+            ]);
           }
         } else {
           console.log(
@@ -233,7 +254,7 @@ export const useChatBot = () => {
         }
         reset();
       } catch (error) {
-        console.error("DEBUG: Error in onAiChatBotAssistant:", error); // Log the error object
+        console.error("DEBUG: Error in onAiChatBotAssistant:", error);
         setOnAiTyping(false);
         setOnChats((prev) => [
           ...prev,
@@ -260,24 +281,16 @@ export const useChatBot = () => {
 
 export const useRealTime = (
   chatRoom: string,
-  setChats: React.Dispatch<
-    React.SetStateAction<
-      {
-        role: "assistant" | "user" | "owner";
-        content: string;
-        link?: string | undefined;
-      }[]
-    >
-  >
+  setChats: React.Dispatch<React.SetStateAction<ChatMessage[]>>
 ) => {
   useEffect(() => {
     pusherClient.subscribe(chatRoom);
-    pusherClient.bind("realtime-mode", (data: any) => {
-      setChats((prev: any) => [
+    pusherClient.bind("realtime-mode", (data: { chat: ChatMessage }) => {
+      setChats((prev) => [
         ...prev,
         {
           role: data.chat.role,
-          content: data.chat.message,
+          content: data.chat.content,
         },
       ]);
     });
