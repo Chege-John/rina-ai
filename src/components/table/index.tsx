@@ -17,11 +17,11 @@ export const DataTable = ({ headers, children }: DataTableProps) => {
     <Table className="rounded-t-xl overflow-hidden">
       <TableHeader>
         <TableRow className="bg-orange-200">
-          {headers.map((header) => (
+          {headers.map((header, index) => (
             <TableHead
-              key={key}
+              key={index}
               className={cn(
-                key == headers.length - 1 && "text-right",
+                index === headers.length - 1 && "text-right",
                 "text-black"
               )}
             >

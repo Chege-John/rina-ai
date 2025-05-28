@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-async function getUserById(userId: number) {
+async function getUserById(userId: string) {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
