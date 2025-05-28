@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React from "react";
 import FormGenerator from "../forms/form-generator";
-import { Loader, UploadIcon } from "lucide-react";
+import { UploadIcon } from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { ErrorMessage } from "@hookform/error-message";
 import { Button } from "../ui/button";
 import { useProducts } from "@/hooks/settings/use-settings";
+import { Loader } from "../loader";
 
 type CreateProductFormProps = {
   id: string;
@@ -22,7 +24,7 @@ const CreateProductForm = ({ id }: CreateProductFormProps) => {
     >
       <FormGenerator
         errors={errors}
-        register={register}
+        register={register as any}
         name="name"
         type="text"
         inputType="input"
@@ -54,7 +56,7 @@ const CreateProductForm = ({ id }: CreateProductFormProps) => {
       </div>
       <FormGenerator
         errors={errors}
-        register={register}
+        register={register as any}
         name="price"
         type="text"
         inputType="input"

@@ -19,21 +19,21 @@ const useSideBar = () => {
 
   const { chatRoom } = useChatContext();
 
-  const onActivateRealtime = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onActivateRealtime = async (checked: boolean) => {
     try {
-      const realtime = await onToggleRealtime(
-        chatRoom!,
-        e.target.ariaChecked == "true" ? false : true
-      );
-      if (realtime) {
-        setRealtime(realtime.chatRoom.live);
+      setLoading(true);
+      const result = await onToggleRealtime(chatRoom!, checked);
+      if (result) {
+        setRealtime(result.chatRoom.live);
         toast({
           title: "Success",
-          description: realtime.message,
+          description: result.message,
         });
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 

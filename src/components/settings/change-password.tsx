@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useChangePassword } from "@/hooks/settings/use-settings";
 import React from "react";
@@ -19,7 +20,7 @@ const ChangePassword = () => {
         <div className="lg:w-[500px] flex flex-col gap-3">
           <FormGenerator
             errors={errors}
-            register={register}
+            register={register as any}
             name="password"
             type="password"
             inputType="input"
@@ -28,7 +29,7 @@ const ChangePassword = () => {
           />
           <FormGenerator
             errors={errors}
-            register={register}
+            register={register as any}
             name="confirmPassword"
             type="password"
             inputType="input"

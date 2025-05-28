@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import React from "react";
+import React, { JSX } from "react";
 
 type Props = {
   size: "max" | "min";

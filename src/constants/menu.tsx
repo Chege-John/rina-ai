@@ -9,6 +9,7 @@ import {
   StarIcon,
   TimerIcon,
 } from "lucide-react";
+import { JSX } from "react";
 
 type SIDE_BAR_MENU_PROPS = {
   label: string;

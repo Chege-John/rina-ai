@@ -30,7 +30,7 @@ const BreadCrumb = (props: Props) => {
           <Loader loading={loading} className="p-0 inline">
             <Switch
               defaultChecked={realtime}
-              onClick={(e) => onActivateRealtime(e)}
+              onCheckedChange={(checked) => onActivateRealtime(checked)}
               className="data-[state=checked]:bg-orange-500 data-[state=unchecked]:bg-gray-300"
             />
           </Loader>

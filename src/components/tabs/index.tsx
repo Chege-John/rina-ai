@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { cn } from "@/lib/utils";
 
