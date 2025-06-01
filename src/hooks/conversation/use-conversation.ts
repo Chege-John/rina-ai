@@ -21,8 +21,8 @@ interface RealtimeData {
     id: string;
     message: string;
     createdAt: Date;
-    role: "assistant" | "user" | null; // Add this
-    seen: boolean; // Add this
+    role: "assistant" | "user" | null;
+    seen: boolean;
   };
 }
 
@@ -47,8 +47,16 @@ export const useConversation = () => {
     }[]
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
+
   useEffect(() => {
     const search = watch(async (value) => {
+      // Fix 1: Add null/undefined check for domain
+      if (!value.domain) {
+        console.log("No domain provided");
+        setChatRooms([]);
+        return;
+      }
+
       console.log("Domain ID being sent to backend:", value.domain);
       setLoading(true);
       try {
@@ -59,7 +67,7 @@ export const useConversation = () => {
         if (rooms && rooms.customer) {
           setChatRooms(rooms.customer);
         } else {
-          setChatRooms([]); // Set to empty array if no rooms found
+          setChatRooms([]);
           console.log("No chat rooms found for domain:");
         }
       } catch (error) {
@@ -75,9 +83,29 @@ export const useConversation = () => {
     try {
       loadMessages(true);
       const messages = await onGetChatMessages(id);
-      if (messages && messages.length > 0) {
+
+      // Fix 2: Proper type checking and handling
+      if (messages && Array.isArray(messages) && messages.length > 0) {
         setChatRoom(id);
-        setChats(messages[0].message || []);
+        // Fix 3: Safe access to message property and add missing 'seen' property
+        const firstMessage = messages[0];
+        if (
+          firstMessage &&
+          "message" in firstMessage &&
+          Array.isArray(firstMessage.message)
+        ) {
+          // Transform messages to match the expected interface by adding 'seen' property
+          const transformedMessages = firstMessage.message.map((msg) => ({
+            message: msg.message,
+            id: msg.id,
+            createdAt: msg.createdAt,
+            role: msg.role as "assistant" | "user" | null,
+            seen: false, // Explicitly add seen property since it doesn't exist in the API response
+          }));
+          setChats(transformedMessages);
+        } else {
+          setChats([]);
+        }
       } else {
         setChatRoom(id);
         setChats([]);
@@ -89,6 +117,7 @@ export const useConversation = () => {
       setChats([]);
     }
   };
+
   return {
     register,
     loading,
@@ -113,7 +142,12 @@ export const useChatTime = (createdAt: Date, roomId: string) => {
     const difference = currentDate - date;
 
     if (difference <= 0) {
-      setMessageSentAt(`${hr}:${min}${hr > 12 ? "PM" : "AM"}`);
+      // Fix 4: Proper time formatting with padding
+      const formattedHr = hr > 12 ? hr - 12 : hr === 0 ? 12 : hr;
+      const formattedMin = min.toString().padStart(2, "0");
+      const period = hr >= 12 ? "PM" : "AM";
+      setMessageSentAt(`${formattedHr}:${formattedMin} ${period}`);
+
       if (current.getHours() - dt.getHours() > 2) {
         setUrgent(true);
       }
@@ -151,6 +185,7 @@ export const useChatWindow = () => {
     resolver: zodResolver(ChatBotMessageSchema),
     mode: "onChange",
   });
+
   const onScrollToBottom = () => {
     messageWindowRef.current?.scroll({
       top: messageWindowRef.current.scrollHeight,
@@ -158,6 +193,7 @@ export const useChatWindow = () => {
       behavior: "smooth",
     });
   };
+
   useEffect(() => {
     onScrollToBottom();
   }, [chats, messageWindowRef]);
@@ -168,21 +204,51 @@ export const useChatWindow = () => {
       pusherClient.bind("realtime-mode", (data: RealtimeData) => {
         setChats((prev) => [...prev, data.chat]);
       });
-      return () => pusherClient.unsubscribe("realtime-mode");
+      return () => {
+        pusherClient.unbind("realtime-mode");
+        pusherClient.unsubscribe(chatRoom);
+      };
     }
   }, [chatRoom, setChats]);
 
   const onHandleSentMessage = handleSubmit(async (values) => {
+    // Fix 5: Add null check for chatRoom
+    if (!chatRoom) {
+      console.error("No active chat room");
+      return;
+    }
+
+    // Fix 6: Check if content exists and is not empty
+    if (!values.content || values.content.trim() === "") {
+      console.error("Message content is required");
+      return;
+    }
+
     try {
       const message = await onOwnerSendMessage(
-        chatRoom!,
-        values.content,
+        chatRoom,
+        values.content, // Now TypeScript knows this is definitely a string
         "assistant"
       );
-      if (message) {
-        setChats((prev) => [...prev, message.message[0]]);
+
+      if (
+        message &&
+        message.message &&
+        Array.isArray(message.message) &&
+        message.message.length > 0
+      ) {
+        // Fix 7: Transform the message to include 'seen' property
+        const transformedMessage = {
+          message: message.message[0].message,
+          id: message.message[0].id,
+          createdAt: message.message[0].createdAt,
+          role: message.message[0].role as "assistant" | "user" | null,
+          seen: false, // Add the missing seen property
+        };
+
+        setChats((prev) => [...prev, transformedMessage]);
         await onRealTimeChat(
-          chatRoom!,
+          chatRoom,
           message.message[0].message,
           message.message[0].id,
           "assistant"
@@ -190,7 +256,7 @@ export const useChatWindow = () => {
         reset();
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error sending message:", error);
     }
   });
 

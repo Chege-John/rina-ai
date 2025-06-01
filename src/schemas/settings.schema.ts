@@ -32,14 +32,21 @@ export const AddDomainSchema = z.object({
     ),
   image: z
     .any()
-    .refine((files) => files?.[0]?.size <= MAX_UPLOAD_SIZE, {
+    .optional()
+    .refine((files) => !files || files?.[0]?.size <= MAX_UPLOAD_SIZE, {
       message: "Your file size must be less than 2MB",
     })
-    .refine((files) => ACCEPTED_FILE_TYPES.includes(files?.[0]?.type), {
-      message: "Only JPG, JPEG & PNG are accepted file formats",
-    }),
+    .refine(
+      (files) => !files || ACCEPTED_FILE_TYPES.includes(files?.[0]?.type),
+      {
+        message: "Only JPG, JPEG & PNG are accepted file formats",
+      }
+    ),
 });
 
+export type AddDomainFormValues = z.infer<typeof AddDomainSchema>;
+
+// Rest of the schema remains unchanged
 export const DomainSettingsSchema = z
   .object({
     domain: z
@@ -67,7 +74,7 @@ export const DomainSettingsSchema = z
           schema.image[0]?.size <= MAX_UPLOAD_SIZE
         );
       }
-      return true; // If no image is provided, validation passes
+      return true;
     },
     {
       message:
@@ -94,7 +101,7 @@ export const AddProductSchema = z
       .min(1, { message: "Price is required" })
       .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
         message: "Price must be a valid positive number",
-      }), // Remove the .transform() - keep as string
+      }),
   })
   .refine(
     (schema) => {
