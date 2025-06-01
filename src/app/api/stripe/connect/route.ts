@@ -3,7 +3,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET!, {
+// Fix: Change STRIPE_SECRET to STRIPE_SECRET_KEY (standard naming)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil",
   typescript: true,
 });
@@ -119,12 +120,11 @@ export async function GET() {
                   },
                 });
                 if (saveAccountId) {
+                  // Fix: Update URLs for production
                   const accountLink = await stripe.accountLinks.create({
                     account: account.id,
-                    refresh_url:
-                      "https://localhost:3000/callback/stripe/refresh",
-                    return_url:
-                      "https://localhost:3000/callback/stripe/success",
+                    refresh_url: `${process.env.NEXT_PUBLIC_URL}/callback/stripe/refresh`,
+                    return_url: `${process.env.NEXT_PUBLIC_URL}/callback/stripe/success`,
                     type: "account_onboarding",
                     collection_options: {
                       fields: "currently_due",
@@ -143,5 +143,6 @@ export async function GET() {
       "An error occured when calling the Stripe API to create an account:",
       error
     );
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
