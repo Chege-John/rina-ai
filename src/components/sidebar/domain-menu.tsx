@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useDomain } from "@/hooks/sidebar/use-domain";
 import { cn } from "@/lib/utils";
 import React from "react";
@@ -45,7 +46,7 @@ const DomainMenu = ({ domains, min }: Props) => {
             >
               <FormGenerator
                 errors={errors}
-                register={register}
+                register={register as any}
                 name="domain"
                 type="text"
                 inputType="input"
@@ -53,7 +54,7 @@ const DomainMenu = ({ domains, min }: Props) => {
                 placeholder="mydomian.com"
               />
               <UploadButton
-                register={register}
+                register={register as any}
                 label="Upload Icon"
                 errors={errors}
               />
