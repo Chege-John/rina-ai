@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "vercel-build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "test-prisma": "ts-node scripts/test-prisma.ts",
-    "test-prisma-dev": "ts-node-dev --respawn scripts/test-prisma.ts"
+    "test-prisma-dev": "ts-node-dev --respawn scripts/test-prisma.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.12.1",
