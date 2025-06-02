@@ -1,6 +1,6 @@
+// app/(dashboard)/layout.tsx
 import { onLoginUser } from "@/actions/auth";
-import SideBar from "@/components/sidebar";
-import { ChatProvider } from "@/context/user-chat-context";
+import DashboardClient from "./dashboardwrapper";
 import React from "react";
 
 type Props = {
@@ -8,19 +8,14 @@ type Props = {
 };
 
 const OwnerLayout = async ({ children }: Props) => {
-  console.log("Dashboard Layout rendering"); // Debug
+  console.log("Dashboard Layout rendering");
 
   const authenticated = await onLoginUser();
   if (!authenticated) return null;
+
   return (
-    <ChatProvider>
-      <div className="flex h-screen w-full">
-        <SideBar domains={authenticated.domain} />
-        <div className="w-full h-screen flex flex-col pl-20 md:pl-4">
-          {children}
-        </div>
-      </div>
-    </ChatProvider>
+    <DashboardClient domains={authenticated.domain}>{children}</DashboardClient>
   );
 };
+
 export default OwnerLayout;
