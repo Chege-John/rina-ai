@@ -4,9 +4,6 @@ import ChangePassword from "@/components/settings/change-password";
 import DarkModetoggle from "@/components/settings/dark-mode";
 import React from "react";
 
-// Force this page to be rendered dynamically (SSR)
-export const dynamic = "force-dynamic";
-
 const page = () => {
   return (
     <>

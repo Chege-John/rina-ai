@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -15,12 +14,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Add this experimental flag
   experimental: {
     serverComponentsExternalPackages: ["@prisma/client"],
   },
-  // Force static optimization for dashboard
-  generateStaticParams: true,
 };
 
-export default nextConfig;
+module.exports = nextConfig;
