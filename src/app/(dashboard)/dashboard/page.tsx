@@ -10,6 +10,8 @@ import InfoBar from "@/components/infobar";
 import { BadgeDollarSign, DollarSign, UserRound } from "lucide-react";
 import React from "react";
 
+export const dynamic = "force-dynamic";
+
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 type Props = {};
 
