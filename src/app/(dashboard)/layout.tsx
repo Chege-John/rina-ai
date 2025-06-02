@@ -2,6 +2,9 @@
 import { onLoginUser } from "@/actions/auth";
 import DashboardClient from "./dashboardwrapper";
 import React from "react";
+import { redirect } from "next/navigation";
+
+export const dynamic = "force-dynamic";
 
 type Props = {
   children: React.ReactNode;
@@ -11,7 +14,9 @@ const OwnerLayout = async ({ children }: Props) => {
   console.log("Dashboard Layout rendering");
 
   const authenticated = await onLoginUser();
-  if (!authenticated) return null;
+  if (!authenticated) {
+    redirect("/auth/sign-in");
+  }
 
   return (
     <DashboardClient domains={authenticated.domain}>{children}</DashboardClient>
