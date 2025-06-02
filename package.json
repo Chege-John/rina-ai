@@ -4,13 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && rm -rf .next && next build",
-    "vercel-build": "prisma generate && rm -rf .next && next build",
+    "build": "npx prisma generate && next build",
+    "vercel-build": "npx prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "test-prisma": "ts-node scripts/test-prisma.ts",
-    "test-prisma-dev": "ts-node-dev --respawn scripts/test-prisma.ts",
-    "postinstall": "prisma generate"
+    "test-prisma": "npx ts-node scripts/test-prisma.ts",
+    "test-prisma-dev": "npx ts-node-dev --respawn scripts/test-prisma.ts",
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.12.1",

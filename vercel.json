@@ -1,6 +1,6 @@
 {
-  "buildCommand": "echo 'Starting build...' && prisma generate && echo 'Prisma generated' && next build --debug",
-  "installCommand": "npm install && prisma generate",
+  "buildCommand": "npx prisma generate && next build",
+  "installCommand": "npm install && npx prisma generate",
   "functions": {
     "app/api/**/*.ts": {
       "maxDuration": 30
