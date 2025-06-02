@@ -15,7 +15,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // existing config here, e.g., for Tailwind
+  // Add this experimental flag
+  experimental: {
+    serverComponentsExternalPackages: ["@prisma/client"],
+  },
+  // Force static optimization for dashboard
+  generateStaticParams: true,
 };
 
 export default nextConfig;
