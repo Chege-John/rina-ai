@@ -3,6 +3,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
+export const dynamic = "force-dynamic";
+
 // Fix: Change STRIPE_SECRET to STRIPE_SECRET_KEY (standard naming)
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil",
