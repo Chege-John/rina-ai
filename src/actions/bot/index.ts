@@ -310,12 +310,12 @@ export const onAiChatBotAssistant = async (
                                    continue the conversation. And add a keyword (realtime) at the end.
 
                                    if the customer agrees to book an appointment send them this 
-                                   link http://localhost:3000/portal/${id}/appointment/${
+                                   link https://rina-ai.netlify.app/portal/${id}/appointment/${
                     checkCustomer?.customer[0].id
                   }
 
                                   if the customer wants to buy a product redirect them to the payment page
-                                  http://localhost:3000/portal/${id}/payment/${
+                                  https://rina-ai.netlify.app/portal/${id}/payment/${
                     checkCustomer?.customer[0].id
                   }
                                    `,

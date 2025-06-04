@@ -26,7 +26,7 @@ const CodeSnippet = ({ id }: Props) => {
   right: 50px;
   border: none;}')
 
-  iframe.src = "https://rina-ai.netlify.app";
+  iframe.src = "https://rina-ai.netlify.app/chatbot";
   iframe.classList.add("chat-frame");
   document.body.appendChild(iframe);
 
