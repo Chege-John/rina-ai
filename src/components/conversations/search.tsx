@@ -14,7 +14,6 @@ type Props = {
 };
 
 const ConversationSearch = ({ domains, register }: Props) => {
-  console.log("Domains received in ConversationSearch:", domains);
   return (
     <div className="flex flex-col py-3 gap-3">
       <input
