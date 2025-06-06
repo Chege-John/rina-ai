@@ -57,11 +57,9 @@ export const useConversation = () => {
         return;
       }
 
-      console.log("Domain ID being sent to backend:", value.domain);
       setLoading(true);
       try {
         const rooms = await onGetDomainChatRooms(value.domain);
-        console.log("Response from onGetDomainChatRooms:", rooms);
 
         setLoading(false);
         if (rooms && rooms.customer) {
@@ -84,23 +82,20 @@ export const useConversation = () => {
       loadMessages(true);
       const messages = await onGetChatMessages(id);
 
-      // Fix 2: Proper type checking and handling
       if (messages && Array.isArray(messages) && messages.length > 0) {
         setChatRoom(id);
-        // Fix 3: Safe access to message property and add missing 'seen' property
         const firstMessage = messages[0];
         if (
           firstMessage &&
           "message" in firstMessage &&
           Array.isArray(firstMessage.message)
         ) {
-          // Transform messages to match the expected interface by adding 'seen' property
           const transformedMessages = firstMessage.message.map((msg) => ({
             message: msg.message,
             id: msg.id,
             createdAt: msg.createdAt,
             role: msg.role as "assistant" | "user" | null,
-            seen: false, // Explicitly add seen property since it doesn't exist in the API response
+            seen: false,
           }));
           setChats(transformedMessages);
         } else {
@@ -142,7 +137,6 @@ export const useChatTime = (createdAt: Date, roomId: string) => {
     const difference = currentDate - date;
 
     if (difference <= 0) {
-      // Fix 4: Proper time formatting with padding
       const formattedHr = hr > 12 ? hr - 12 : hr === 0 ? 12 : hr;
       const formattedMin = min.toString().padStart(2, "0");
       const period = hr >= 12 ? "PM" : "AM";
@@ -212,13 +206,11 @@ export const useChatWindow = () => {
   }, [chatRoom, setChats]);
 
   const onHandleSentMessage = handleSubmit(async (values) => {
-    // Fix 5: Add null check for chatRoom
     if (!chatRoom) {
       console.error("No active chat room");
       return;
     }
 
-    // Fix 6: Check if content exists and is not empty
     if (!values.content || values.content.trim() === "") {
       console.error("Message content is required");
       return;
@@ -227,7 +219,7 @@ export const useChatWindow = () => {
     try {
       const message = await onOwnerSendMessage(
         chatRoom,
-        values.content, // Now TypeScript knows this is definitely a string
+        values.content,
         "assistant"
       );
 
@@ -237,13 +229,12 @@ export const useChatWindow = () => {
         Array.isArray(message.message) &&
         message.message.length > 0
       ) {
-        // Fix 7: Transform the message to include 'seen' property
         const transformedMessage = {
           message: message.message[0].message,
           id: message.message[0].id,
           createdAt: message.message[0].createdAt,
           role: message.message[0].role as "assistant" | "user" | null,
-          seen: false, // Add the missing seen property
+          seen: false,
         };
 
         setChats((prev) => [...prev, transformedMessage]);
