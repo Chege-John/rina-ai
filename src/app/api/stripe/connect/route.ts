@@ -5,7 +5,6 @@ import Stripe from "stripe";
 
 export const dynamic = "force-dynamic";
 
-// Fix: Change STRIPE_SECRET to STRIPE_SECRET_KEY (standard naming)
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-04-30.basil",
   typescript: true,
@@ -122,7 +121,6 @@ export async function GET() {
                   },
                 });
                 if (saveAccountId) {
-                  // Fix: Update URLs for production
                   const accountLink = await stripe.accountLinks.create({
                     account: account.id,
                     refresh_url: `${process.env.NEXT_PUBLIC_URL}/callback/stripe/refresh`,

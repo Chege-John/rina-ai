@@ -8,7 +8,6 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { onMailer } from "../mailer";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-// Initialize Gemini client
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -93,7 +92,6 @@ export const onAiChatBotAssistant = async (
   author: "user" = "user",
   message: string
 ) => {
-  // Log the parameters to verify the data
   console.log("onAiChatBotAssistant called with:", {
     id,
     chat,
@@ -101,14 +99,12 @@ export const onAiChatBotAssistant = async (
     message,
   });
 
-  // Check if chat is an array
   if (!Array.isArray(chat)) {
     console.error("Chat is not an array:", chat);
-    return; // or handle this case appropriately
+    return;
   }
 
   try {
-    // Add more detailed logging
     console.log("Incoming message:", message);
     console.log("Domain ID:", id);
 
@@ -129,7 +125,6 @@ export const onAiChatBotAssistant = async (
       },
     });
 
-    // Log domain and questions
     console.log("Chat Bot Domain:", chatBotDomain);
     console.log("Filter Questions:", chatBotDomain?.filterQuestions);
 
@@ -137,15 +132,15 @@ export const onAiChatBotAssistant = async (
       const extractedEmail = extractEmailsFromString(message);
       if (extractedEmail) {
         customerEmail = extractedEmail[0];
-        console.log("DEBUG: Extracted Email:", customerEmail); // Inspect extracted email
+        console.log("DEBUG: Extracted Email:", customerEmail);
       } else {
         console.log("DEBUG: No emails found in message.");
       }
 
-      console.log("Extracted Email:", customerEmail); // Log extracted email
+      console.log("Extracted Email:", customerEmail);
 
       if (customerEmail) {
-        console.log("DEBUG: Before checkCustomer query"); // Add this log
+        console.log("DEBUG: Before checkCustomer query");
         const checkCustomer = await prisma.domain.findUnique({
           where: {
             id,
@@ -203,7 +198,7 @@ export const onAiChatBotAssistant = async (
             },
           });
 
-          console.log("New Customer Created:", newCustomer); // Log new customer
+          console.log("New Customer Created:", newCustomer);
 
           if (newCustomer) {
             const response = {
@@ -265,15 +260,11 @@ export const onAiChatBotAssistant = async (
           author
         );
 
-        // Prepare chat history for Gemini
         const chatHistory = chat.map((msg) => ({
           role: msg.role === "assistant" ? "model" : "user",
           parts: [{ text: msg.content }],
         }));
 
-        // Gemini API call (keeping chatCompletion variable name)
-
-        // Log chatHistory before Gemini call
         console.log("Chat History before Gemini:", chatHistory);
 
         const chatCompletion = await model.generateContent({
@@ -330,7 +321,6 @@ export const onAiChatBotAssistant = async (
           ],
         });
 
-        // Log chatCompletion result
         console.log("Chat Completion Result:", chatCompletion);
 
         if (chatCompletion.response.text().includes("realtime")) {
@@ -424,8 +414,6 @@ export const onAiChatBotAssistant = async (
       }
       console.log("No customer found");
 
-      // Gemini API call for new customer
-      // Log chat before Gemini call for new customer
       console.log("Chat before Gemini (new customer):", chat);
 
       const chatCompletion = await model.generateContent({
@@ -463,7 +451,6 @@ export const onAiChatBotAssistant = async (
         ],
       });
 
-      // Log chatCompletion result for new customer
       console.log("Chat Completion Result (new customer):", chatCompletion);
 
       if (chatCompletion) {
