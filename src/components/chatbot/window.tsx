@@ -25,7 +25,7 @@ type Props = {
     content: string;
     link?: string;
   }[];
-  onChat: (values: ChatBotMessageProps) => Promise<void>; // Fixed: Now accepts parameters
+  onChat: (values: ChatBotMessageProps) => Promise<void>;
   onResponding: boolean;
   domainName: string;
   theme?: string;

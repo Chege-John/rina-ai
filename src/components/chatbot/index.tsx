@@ -42,9 +42,9 @@ const AiChatBot = (props: Props) => {
         onChat={onStartChatting}
         onResponding={onAiTyping}
         domainName={currentBot?.name || "Chat Assistant"}
-        theme={currentBot?.chatbot?.background || "#ffffff"} // Fixed to lowercase
-        textColor={currentBot?.chatbot?.textColor || "#000000"} // Fixed to lowercase
-        help={currentBot?.chatbot?.helpdesk || ""} // Fixed to lowercase
+        theme={currentBot?.chatbot?.background || "#ffffff"}
+        textColor={currentBot?.chatbot?.textColor || "#000000"}
+        help={currentBot?.chatbot?.helpdesk || ""}
         realtimeMode={onRealTime}
         helpdesk={currentBot?.helpdesk || []}
         setChat={setOnChats}
