@@ -2,7 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChatBotMessageProps } from "@/schemas/conversation.schema";
 import React, { forwardRef } from "react";
-import { UseFormRegister } from "react-hook-form";
+import {
+  UseFormHandleSubmit,
+  UseFormRegister,
+  UseFormReset,
+} from "react-hook-form";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import RealTimeMode from "./real-time";
 import Image from "next/image";
@@ -20,6 +24,7 @@ import Accordion from "../accordian";
 
 type Props = {
   register: UseFormRegister<ChatBotMessageProps>;
+  reset: UseFormReset<ChatBotMessageProps>;
   chats: {
     role: "assistant" | "user" | "owner";
     content: string;
@@ -68,12 +73,13 @@ const BotWindow = forwardRef<HTMLDivElement, Props>(
       realtimeMode,
       helpdesk,
       setChat,
+      reset,
     },
     ref
   ) => {
     return (
       <div
-        className="h-[670px] w-[450px] flex flex-col bg-white 
+        className="h-[630px] w-[420px] flex flex-col bg-white 
     rounded-xl mr-[80px] border-[1px] overflow-hidden z-[9999]"
       >
         <div className="flex justify-between px-4 pt-4">
@@ -130,6 +136,7 @@ const BotWindow = forwardRef<HTMLDivElement, Props>(
                   console.log("DEBUG: Form submitted manually");
                   const content = (e.target as any).content.value;
                   console.log("DEBUG: Form content:", content);
+                  reset(); // Reset the form after submission
                   await onChat({ content } as ChatBotMessageProps); // Added await and proper typing
                 }}
                 className="flex px-3 py-1 flex-col flex-1 bg-gray-200"

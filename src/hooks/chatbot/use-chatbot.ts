@@ -89,7 +89,7 @@ export const useChatBot = () => {
     postToParent(
       JSON.stringify({
         width: botOpened ? 550 : 80,
-        height: botOpened ? 730 : 730,
+        height: botOpened ? 720 : 720,
       })
     );
   }, [botOpened]);
@@ -276,6 +276,7 @@ export const useChatBot = () => {
     onRealTime,
     setOnChats,
     register,
+    reset,
   };
 };
 

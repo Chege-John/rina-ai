@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
+
 import { useChatBot } from "@/hooks/chatbot/use-chatbot";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import BotWindow from "./window";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -23,9 +24,33 @@ const AiChatBot = (props: Props) => {
     loading,
     onRealTime,
     setOnChats,
+    reset,
   } = useChatBot();
 
-  // Log key state for debugging
+  const botWindowRef = useRef<HTMLDivElement>(null);
+  const botIconRef = useRef<HTMLDivElement>(null);
+
+  // Handle clicks outside of bot window and icon
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        botOpened &&
+        botWindowRef.current &&
+        botIconRef.current &&
+        !botWindowRef.current.contains(target) &&
+        !botIconRef.current.contains(target)
+      ) {
+        onOpenChatBot(); // Close the chatbot
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [botOpened, onOpenChatBot]);
+
   useEffect(() => {
     console.log("DEBUG: Register in AiChatBot:", register);
     console.log("DEBUG: onStartChatting in AiChatBot:", onStartChatting);
@@ -35,22 +60,28 @@ const AiChatBot = (props: Props) => {
   }, [currentBot, loading, botOpened, register, onStartChatting]);
 
   return (
-    <div className="h-screen flex flex-col justify-end items-end gap-4 ">
-      <BotWindow
-        register={register}
-        chats={onChats}
-        onChat={onStartChatting}
-        onResponding={onAiTyping}
-        domainName={currentBot?.name || "Chat Assistant"}
-        theme={currentBot?.chatbot?.background || "#ffffff"}
-        textColor={currentBot?.chatbot?.textColor || "#000000"}
-        help={currentBot?.chatbot?.helpdesk || ""}
-        realtimeMode={onRealTime}
-        helpdesk={currentBot?.helpdesk || []}
-        setChat={setOnChats}
-        ref={messageWindowRef}
-      />
+    <div className="h-screen flex flex-col justify-end items-end gap-1 z-[9999]">
+      {botOpened && (
+        <div ref={botWindowRef}>
+          <BotWindow
+            register={register}
+            chats={onChats}
+            onChat={onStartChatting}
+            onResponding={onAiTyping}
+            domainName={currentBot?.name || "Chat Assistant"}
+            theme={currentBot?.chatbot?.background || "#ffffff"}
+            textColor={currentBot?.chatbot?.textColor || "#000000"}
+            help={currentBot?.chatbot?.helpdesk || ""}
+            realtimeMode={onRealTime}
+            helpdesk={currentBot?.helpdesk || []}
+            setChat={setOnChats}
+            ref={messageWindowRef}
+            reset={reset}
+          />
+        </div>
+      )}
       <div
+        ref={botIconRef}
         className={cn(
           "rounded-full relative cursor-pointer w-20 h-20 flex items-center justify-center transition-all duration-300 ease-in-out",
           loading ? "bg-gray-200" : "",
@@ -61,22 +92,19 @@ const AiChatBot = (props: Props) => {
         onClick={loading ? undefined : onOpenChatBot}
       >
         {loading ? (
-          // Show loading spinner when loading
           <div className="animate-spin h-8 w-8 border-4 border-orange-300 border-t-transparent rounded-full"></div>
-        ) : currentBot?.chatbot?.icon ? ( // Fixed to lowercase
-          // Using error boundary for Image component
+        ) : currentBot?.chatbot?.icon ? (
           <div className="relative w-full h-full rounded-full overflow-hidden">
             <Image
               src={`https://ucarecdn.com/${
-                currentBot.chatbot.icon || "default-icon" // Fixed to lowercase
+                currentBot.chatbot.icon || "default-icon"
               }/`}
               alt="bot"
               fill
-              className="object-cover p-2" //
+              className="object-cover p-2"
               onError={(e) => {
                 console.error("Failed to load bot icon");
                 e.currentTarget.style.display = "none";
-                // Show fallback icon when image fails to load
                 const fallback = document.createElement("div");
                 fallback.className =
                   "w-full h-full flex items-center justify-center";
@@ -90,7 +118,7 @@ const AiChatBot = (props: Props) => {
           <BotIcon
             size={70}
             className="bg-orange-400 rounded-full"
-            color={currentBot?.chatbot?.textColor || "#e07e16"} // Fixed to lowercase
+            color={currentBot?.chatbot?.textColor || "#e07e16"}
           />
         )}
       </div>
