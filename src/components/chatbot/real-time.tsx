@@ -13,10 +13,19 @@ type Props = {
       }[]
     >
   >;
+  setRealTime: React.Dispatch<
+    React.SetStateAction<
+      | {
+          chatroom: string;
+          mode: string;
+        }
+      | undefined
+    >
+  >;
 };
 
-const RealTimeMode = ({ chatRoomId, setChats }: Props) => {
-  useRealTime(chatRoomId, setChats);
+const RealTimeMode = ({ chatRoomId, setChats, setRealTime }: Props) => {
+  useRealTime(chatRoomId, setChats, setRealTime);
   return (
     <Card className="px-3 rounded-full py-1 bg-orange-300 text-black text-sm">
       Real Time

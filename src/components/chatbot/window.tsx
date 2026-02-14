@@ -57,6 +57,15 @@ type Props = {
       }[]
     >
   >;
+  setRealTime: React.Dispatch<
+    React.SetStateAction<
+      | {
+          chatroom: string;
+          mode: string;
+        }
+      | undefined
+    >
+  >;
 };
 
 const BotWindow = forwardRef<HTMLDivElement, Props>(
@@ -73,14 +82,15 @@ const BotWindow = forwardRef<HTMLDivElement, Props>(
       realtimeMode,
       helpdesk,
       setChat,
+      setRealTime,
       reset,
     },
-    ref
+    ref,
   ) => {
     return (
       <div
         className="h-[630px] w-[420px] flex flex-col bg-white 
-    rounded-xl mr-[80px] border-[1px] overflow-hidden z-[9999]"
+    rounded-xl mr-[80px] border-[1px] overflow-hidden z-[9999] relative bottom-[-40px]"
       >
         <div className="flex justify-between px-4 pt-4">
           <div className="flex gap-2">
@@ -98,6 +108,7 @@ const BotWindow = forwardRef<HTMLDivElement, Props>(
               {realtimeMode?.mode && (
                 <RealTimeMode
                   setChats={setChat}
+                  setRealTime={setRealTime}
                   chatRoomId={realtimeMode.chatroom}
                 />
               )}
@@ -126,7 +137,7 @@ const BotWindow = forwardRef<HTMLDivElement, Props>(
                 ref={ref}
               >
                 {chats.map((chat, key) => (
-                  <Bubble key={key} message={chat} />
+                  <Bubble key={key} message={chat} ghost />
                 ))}
                 {onResponding && <Responding />}
               </div>
@@ -181,7 +192,7 @@ const BotWindow = forwardRef<HTMLDivElement, Props>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 export default BotWindow;

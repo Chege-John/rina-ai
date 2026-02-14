@@ -20,7 +20,7 @@ export const ChatBotMessageSchema: ZodType<ChatBotMessageProps> = z
       .min(1)
       .optional()
       .or(z.literal("").transform(() => undefined)),
-    image: z.union([z.string(), z.array(z.instanceof(File))]).nullable(), // string, File[], or null
+    image: z.union([z.string(), z.array(z.instanceof(File))]).nullable().optional(), // string, File[], null, or undefined
   })
   .refine(
     (schema) => {

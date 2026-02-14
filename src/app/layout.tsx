@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Figtree } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/context/theme-provider";
 
-const jakarta = Plus_Jakarta_Sans({
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const figtree = Figtree({
+  subsets: ["latin"],
+  variable: "--font-figtree",
 });
 
 export const metadata: Metadata = {
@@ -20,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="light" style={{ colorScheme: "light" }}>
       <head />
-      <body className={jakarta.className}>
+      <body className={`${inter.variable} ${figtree.variable} ${inter.className}`}>
         <ClerkProvider>
           <ThemeProvider
             attribute="class"

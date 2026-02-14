@@ -113,11 +113,13 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
     --brand: 31 97% 72%;
   }
-}
 
-@layer base {
   * {
-    border-color: var(--border);
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
@@ -186,14 +188,4 @@ body {
   --h-accent: 30;
   --s-accent: 100%;
   --l-accent: 50%;
-}
-
-@layer base {
-  * {
-    border-color: hsl(var(--border));
-  }
-  body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-  }
 }

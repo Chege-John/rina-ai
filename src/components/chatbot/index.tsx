@@ -23,6 +23,7 @@ const AiChatBot = (props: Props) => {
     currentBot,
     loading,
     onRealTime,
+    setOnRealTime,
     setOnChats,
     reset,
   } = useChatBot();
@@ -75,6 +76,7 @@ const AiChatBot = (props: Props) => {
             realtimeMode={onRealTime}
             helpdesk={currentBot?.helpdesk || []}
             setChat={setOnChats}
+            setRealTime={setOnRealTime}
             ref={messageWindowRef}
             reset={reset}
           />

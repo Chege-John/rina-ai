@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import PusherClient from "pusher-js";
@@ -9,7 +10,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const extractUUIDFromString = (url: string) => {
   return url.match(
-    /^[0-9a-f]{8}-?[0-9a-f]{4}-?[1-5][0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$/i
+    /^[0-9a-f]{8}-?[0-9a-f]{4}-?[1-5][0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$/i,
   );
 };
 
@@ -17,16 +18,42 @@ export const pusherServer = new PusherServer({
   appId: process.env.PUSHER_APP_ID as string,
   key: process.env.NEXT_PUBLIC_PUSHER_APP_KEY as string,
   secret: process.env.PUSHER_APP_SECRET as string,
-  cluster: (process.env.PUSHER_APP_CLUSTER as string) || "mt1",
+  cluster:
+    process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER ||
+    process.env.PUSHER_APP_CLUSTER ||
+    "mt1",
   useTLS: true,
 });
+
+if (!process.env.NEXT_PUBLIC_PUSHER_APP_KEY) {
+  console.warn("⚠️ NEXT_PUBLIC_PUSHER_APP_KEY is not defined");
+}
+
+if (
+  !process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER &&
+  !process.env.PUSHER_APP_CLUSTER
+) {
+  console.warn("⚠️ Pusher cluster is not defined, defaulting to 'mt1'");
+}
 
 export const pusherClient = new PusherClient(
   process.env.NEXT_PUBLIC_PUSHER_APP_KEY as string,
   {
-    cluster: (process.env.PUSHER_APP_CLUSTER as string) || "mt1",
-  }
+    cluster:
+      process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER ||
+      process.env.PUSHER_APP_CLUSTER ||
+      "mt1",
+    forceTLS: true,
+  },
 );
+
+pusherClient.connection.bind("error", (err: any) => {
+  console.error("❌ Pusher connection error:", err);
+});
+
+pusherClient.connection.bind("state_change", (states: any) => {
+  console.log("📡 Pusher connection state:", states.current);
+});
 
 export const postToParent = (message: string) => {
   window.parent.postMessage(message, "*");
@@ -38,7 +65,7 @@ export const extractURLfromString = (url: string) => {
 
 export const extractEmailsFromString = (text: string): string[] | null => {
   const matches = text.match(
-    /([a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9_-]+)/gi
+    /([a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9_-]+)/gi,
   );
   return matches;
 };
@@ -47,24 +74,24 @@ export const getMonthName = (month: number) => {
   return month == 1
     ? "Jan"
     : month == 2
-    ? "Feb"
-    : month == 3
-    ? "Mar"
-    : month == 4
-    ? "Apr"
-    : month == 5
-    ? "May"
-    : month == 6
-    ? "Jun"
-    : month == 7
-    ? "Jul"
-    : month == 8
-    ? "Aug"
-    : month == 9
-    ? "Sep"
-    : month == 10
-    ? "Oct"
-    : month == 11
-    ? "Nov"
-    : month == 12 && "Dec";
+      ? "Feb"
+      : month == 3
+        ? "Mar"
+        : month == 4
+          ? "Apr"
+          : month == 5
+            ? "May"
+            : month == 6
+              ? "Jun"
+              : month == 7
+                ? "Jul"
+                : month == 8
+                  ? "Aug"
+                  : month == 9
+                    ? "Sep"
+                    : month == 10
+                      ? "Oct"
+                      : month == 11
+                        ? "Nov"
+                        : month == 12 && "Dec";
 };

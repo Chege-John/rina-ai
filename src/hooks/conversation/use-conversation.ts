@@ -20,8 +20,8 @@ interface RealtimeData {
   chat: {
     id: string;
     message: string;
-    createdAt: Date;
-    role: "assistant" | "user" | null;
+    createdAt: Date | string;
+    role: "ASSISTANT" | "USER" | "assistant" | "user" | "OWNER" | "CUSTOMER" | null;
     seen: boolean;
   };
 }
@@ -47,6 +47,27 @@ export const useConversation = () => {
     }[]
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const domainId = watch("domain");
+
+  useEffect(() => {
+    if (domainId) {
+      console.log("DEBUG: Subscribing to domain channel:", domainId);
+      const channel = pusherClient.subscribe(domainId);
+      channel.bind("new-message", async (data: any) => {
+        console.log("DEBUG: Received domain-level update, refreshing rooms");
+        const rooms = await onGetDomainChatRooms(domainId);
+        if (rooms && rooms.customer) {
+          setChatRooms(rooms.customer);
+        }
+      });
+
+      return () => {
+        channel.unbind("new-message");
+        pusherClient.unsubscribe(domainId);
+      };
+    }
+  }, [domainId]);
 
   useEffect(() => {
     const search = watch(async (value) => {
@@ -94,7 +115,7 @@ export const useConversation = () => {
             message: msg.message,
             id: msg.id,
             createdAt: msg.createdAt,
-            role: msg.role as "assistant" | "user" | null,
+            role: msg.role as "ASSISTANT" | "USER" | "assistant" | "user" | "OWNER" | "CUSTOMER" | null,
             seen: false,
           }));
           setChats(transformedMessages);
@@ -175,10 +196,16 @@ export const useChatTime = (createdAt: Date, roomId: string) => {
 export const useChatWindow = () => {
   const { chats, loading, chatRoom, setChats } = useChatContext();
   const messageWindowRef = useRef<HTMLDivElement | null>(null);
-  const { register, handleSubmit, reset } = useForm({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<ChatBotMessageProps>({
     resolver: zodResolver(ChatBotMessageSchema),
     mode: "onChange",
   });
+
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      console.log("DEBUG: Form validation errors:", errors);
+    }
+  }, [errors]);
 
   const onScrollToBottom = () => {
     messageWindowRef.current?.scroll({
@@ -194,25 +221,44 @@ export const useChatWindow = () => {
 
   useEffect(() => {
     if (chatRoom) {
-      pusherClient.subscribe(chatRoom);
-      pusherClient.bind("realtime-mode", (data: RealtimeData) => {
-        setChats((prev) => [...prev, data.chat]);
+      console.log("DEBUG: Subscribing to Pusher channel:", chatRoom);
+      const channel = pusherClient.subscribe(chatRoom);
+      
+      channel.bind("realtime-mode", (data: RealtimeData) => {
+        console.log("DEBUG: Received real-time message in Messenger:", data.chat);
+        setChats((prev) => {
+          if (data.chat.id && prev.find((msg) => msg.id === data.chat.id)) {
+            console.log("DEBUG: Duplicate message ignored:", data.chat.id);
+            return prev;
+          }
+          const newMessage = {
+            ...data.chat,
+            // Ensure the message content is captured regardless of property name
+            message: data.chat.message || (data.chat as any).content || "",
+            createdAt: new Date(data.chat.createdAt),
+          };
+          console.log("DEBUG: Updating chats state with:", newMessage);
+          return [...prev, newMessage];
+        });
       });
+
       return () => {
-        pusherClient.unbind("realtime-mode");
+        console.log("DEBUG: Unsubscribing from Pusher channel:", chatRoom);
+        channel.unbind("realtime-mode");
         pusherClient.unsubscribe(chatRoom);
       };
     }
   }, [chatRoom, setChats]);
 
   const onHandleSentMessage = handleSubmit(async (values) => {
+    console.log("DEBUG: onHandleSentMessage triggered with values:", values);
     if (!chatRoom) {
       console.error("No active chat room");
       return;
     }
 
     if (!values.content || values.content.trim() === "") {
-      console.error("Message content is required");
+      console.log("DEBUG: Empty message content, not sending");
       return;
     }
 
@@ -233,10 +279,11 @@ export const useChatWindow = () => {
           message: message.message[0].message,
           id: message.message[0].id,
           createdAt: message.message[0].createdAt,
-          role: message.message[0].role as "assistant" | "user" | null,
+          role: "OWNER" as const,
           seen: false,
         };
 
+        console.log("DEBUG: Message sent successfully, updating local state");
         setChats((prev) => [...prev, transformedMessage]);
         await onRealTimeChat(
           chatRoom,
@@ -247,7 +294,7 @@ export const useChatWindow = () => {
         reset();
       }
     } catch (error) {
-      console.log("Error sending message:", error);
+      console.error("❌ Error sending message:", error);
     }
   });
 

@@ -19,6 +19,11 @@ export const onToggleRealtime = async (id: string, state: boolean) => {
     });
 
     if (chatRoom) {
+      // Broadcast to the chatroom so the client knows to switch mode
+      await pusherServer.trigger(id, "realtime-toggle", {
+        live: state,
+      });
+
       return {
         status: 200,
         message: chatRoom.live
@@ -139,31 +144,63 @@ export const onViewUnReadMessages = async (id: string) => {
 };
 
 export const onRealTimeChat = async (
-  id: string,
   chatroomId: string,
   message: string,
-  role: "assistant" | "user"
+  id: string,
+  role: "assistant" | "user",
+  clientId?: string
 ) => {
-  pusherServer.trigger(chatroomId, "realtime-mode", {
-    chat: { message, role, id },
-  });
+  try {
+    console.log("triggering realtime chat", chatroomId);
+    await pusherServer.trigger(chatroomId, "realtime-mode", {
+      chat: {
+        id,
+        clientId,
+        message,
+        role: role === "assistant" ? "OWNER" : "CUSTOMER",
+        createdAt: new Date(),
+        seen: false,
+      },
+    });
+
+    // Also trigger a domain-level event to refresh the chat list for the agent
+    const chatRoom = await prisma.chatRoom.findUnique({
+      where: { id: chatroomId },
+      select: {
+        customer: {
+          select: {
+            domainId: true,
+          },
+        },
+      },
+    });
+
+    if (chatRoom?.customer?.domainId) {
+      console.log("triggering domain-level update", chatRoom.customer.domainId);
+      await pusherServer.trigger(chatRoom.customer.domainId, "new-message", {
+        chatRoomId: chatroomId,
+      });
+    }
+  } catch (error) {
+    console.error("❌ Pusher trigger error:", error);
+  }
 };
 
 export const onOwnerSendMessage = async (
+  chatroomId: string,
   message: string,
-  chatroom: string,
   role: "user" | "assistant"
 ) => {
   try {
     const chat = await prisma.chatRoom.update({
       where: {
-        id: chatroom,
+        id: chatroomId,
       },
       data: {
         message: {
           create: {
             message,
-            role,
+            role: role === "assistant" ? "OWNER" : "CUSTOMER",
           },
         },
       },
@@ -174,7 +211,6 @@ export const onOwnerSendMessage = async (
             role: true,
             message: true,
             createdAt: true,
-            //  seen: true,
           },
           orderBy: {
             createdAt: "desc",
