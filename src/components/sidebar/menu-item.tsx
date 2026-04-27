@@ -12,22 +12,28 @@ type Props = {
 };
 
 const MenuItem = ({ size, path, icon, label, current, onSignOut }: Props) => {
+  const isActive = current === path;
+
   switch (size) {
     case "max":
       return (
         <Link
           onClick={onSignOut}
           className={cn(
-            "flex items-center gap-2 px-1 py-2 rounded-lg my-1",
-            !current
-              ? "text-gray-500"
-              : current == path
-              ? "bg-white font-bold text-black"
-              : "text-gray-500"
+            "flex items-center gap-3 px-3 py-2 rounded-lg my-1 transition-all duration-200 group",
+            isActive
+              ? "bg-[#256ff1] text-white font-medium shadow-sm"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )}
           href={path ? `/${path}` : "#"}
         >
-          {icon} {label}
+          {React.cloneElement(icon, {
+            className: cn(
+              "h-5 w-5",
+              isActive ? "text-white" : "text-muted-foreground group-hover:text-foreground"
+            ),
+          })}
+          <span className="text-sm">{label}</span>
         </Link>
       );
 
@@ -36,16 +42,19 @@ const MenuItem = ({ size, path, icon, label, current, onSignOut }: Props) => {
         <Link
           onClick={onSignOut}
           className={cn(
-            !current
-              ? "text-gray-500"
-              : current == path
-              ? "bg-white font-bold text-black"
-              : "text-gray-500",
-            "rounded-lg py-2 my-1"
+            "flex items-center justify-center rounded-lg py-2 my-1 transition-all duration-200 group",
+            isActive
+              ? "bg-[#256ff1] text-white shadow-sm"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )}
           href={path ? `/${path}` : "#"}
         >
-          {icon}
+          {React.cloneElement(icon, {
+            className: cn(
+              "h-5 w-5",
+              isActive ? "text-white" : "text-muted-foreground group-hover:text-foreground"
+            ),
+          })}
         </Link>
       );
 

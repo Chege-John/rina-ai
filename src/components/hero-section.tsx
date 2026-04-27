@@ -68,7 +68,7 @@ export function HeroSection({
           )}
 
           {/* Title */}
-          <h1 className="relative z-10 inline-block animate-appear bg-gradient-to-r from-gray-900 to-gray-500 bg-clip-text text-4xl font-semibold leading-tight text-transparent drop-shadow-2xl sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
+          <h1 className="relative z-10 inline-block animate-appear bg-gradient-to-b from-foreground via-foreground/90 to-muted-foreground bg-clip-text text-4xl font-semibold leading-tight text-transparent drop-shadow-sm sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
             {title}
           </h1>
 

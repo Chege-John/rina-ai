@@ -11,9 +11,11 @@ const ConversationPage = async () => {
   const domains = await onGetAllAccountDomains();
   return (
     <div className="w-full h-full flex">
-      <ConversationMenu domains={domains?.domains} />
-      <Separator orientation="vertical" className="bg-gray-400" />
-      <div className="w-full flex flex-col">
+      <div className="w-96 h-full flex flex-col shrink-0">
+        <ConversationMenu domains={domains?.domains} />
+      </div>
+      <Separator orientation="vertical" />
+      <div className="w-full flex flex-col h-full">
         <div className="px-5">
           <InfoBar />
         </div>

@@ -16,7 +16,7 @@ const DashboardClient = ({ children, domains }: Props) => {
     <ChatProvider>
       <div className="flex h-screen w-full">
         <SideBar domains={domains} />
-        <div className="w-full h-screen flex flex-col pl-20 md:pl-4">
+        <div className="w-full h-screen flex flex-col pl-20 md:pl-4 bg-[#f9fbfc]">
           {children}
         </div>
       </div>

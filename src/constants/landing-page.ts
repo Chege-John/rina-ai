@@ -27,3 +27,10 @@ export const pricingCards = [
     priceId: "price_1Mx7yXKt9Q1vRqoN6YjN8JSIHJ4",
   },
 ];
+
+export const LANDING_PAGE_MENU = [
+  { label: "Home", path: "/" },
+  { label: "Features", path: "#features" },
+  { label: "Pricing", path: "#pricing" },
+  { label: "Contact", path: "#contact" },
+];

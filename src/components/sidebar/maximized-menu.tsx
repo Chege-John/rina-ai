@@ -1,5 +1,5 @@
 import { SIDE_BAR_MENU } from "@/constants/menu";
-import { LogOut, Menu, MonitorSmartphone } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import DomainMenu from "./domain-menu";
@@ -21,48 +21,44 @@ type Props = {
 
 const MaxMenu = ({ current, domains, onExpand, onSignOut }: Props) => {
   return (
-    <div className="py-3 px-4 flex flex-col h-full ">
-      <div className="flex justify-between items-center">
-        <Image
-          src="/images/logo.png"
-          alt="LOGO"
-          sizes="100vw"
-          className="animate-fade-in  delay-300 fill-mode-forwards"
-          style={{
-            width: "50%",
-            height: "auto",
-          }}
-          width={0}
-          height={0}
-        />
+    <div className="py-4 px-4 flex flex-col h-full bg-background">
+      <div className="flex justify-between items-center mb-8">
+        <div className="flex items-center gap-2">
+          <Image
+            src="/images/logo.png"
+            alt="Rina AI Logo"
+            className="animate-fade-in delay-300 fill-mode-forwards rounded-lg"
+            width={32}
+            height={32}
+          />
+          <span className="font-bold text-lg animate-fade-in delay-300">Rina AI</span>
+        </div>
         <Menu
-          className="cursor-pointer animate-fade-in  delay-300 fill-mode-forwards"
+          className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors animate-fade-in delay-300 fill-mode-forwards"
           onClick={onExpand}
         />
       </div>
-      <div
-        className="animate-fade-in  delay-300 fill-mode-forwards
-      flex flex-col justify-between h-full pt-10"
-      >
-        <div className="flex flex-col">
-          <p className="text-xs text-gray-500 mb-3">MENU</p>
+      
+      <div className="flex flex-col flex-1 animate-fade-in delay-300 fill-mode-forwards overflow-y-auto">
+        <div className="flex flex-col gap-1">
+          <p className="text-xs font-medium text-muted-foreground mb-2 px-2 uppercase tracking-wider">Menu</p>
           {SIDE_BAR_MENU.map((menu, key) => (
             <MenuItem size="max" {...menu} key={key} current={current} />
           ))}
-          <DomainMenu domains={domains} />
+          
+          <div className="mt-6">
+             <p className="text-xs font-medium text-muted-foreground mb-2 px-2 uppercase tracking-wider">Domains</p>
+             <DomainMenu domains={domains} />
+          </div>
         </div>
-        <div className="flex flex-col">
-          <p className="text-xs text-gray-500 mb-3">OPTIONS</p>
+        
+        <div className="mt-auto pt-4 border-t border-border">
+          <p className="text-xs font-medium text-muted-foreground mb-2 px-2 uppercase tracking-wider">Options</p>
           <MenuItem
             size="max"
             label="Sign out"
             icon={<LogOut />}
             onSignOut={onSignOut}
-          />
-          <MenuItem
-            size="max"
-            label="Mobile App"
-            icon={<MonitorSmartphone />}
           />
         </div>
       </div>

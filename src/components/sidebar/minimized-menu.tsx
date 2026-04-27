@@ -1,5 +1,5 @@
 import { SIDE_BAR_MENU } from "@/constants/menu";
-import { LogOut, MenuIcon, MonitorSmartphone } from "lucide-react";
+import { LogOut, MenuIcon } from "lucide-react";
 import React from "react";
 import MenuItem from "./menu-item";
 import DomainMenu from "./domain-menu";
@@ -46,7 +46,6 @@ export const MinMenu = ({
             icon={<LogOut />}
             onSignOut={onSignOut}
           />
-          <MenuItem size="min" label="Sign Out" icon={<MonitorSmartphone />} />
         </div>
       </div>
     </div>

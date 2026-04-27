@@ -1,12 +1,13 @@
 import { HeroSection } from "@/components/hero-section";
 import NavBar from "@/components/navbar";
+import { FeaturesSection } from "@/components/features-section";
 import { ArrowRightIcon } from "lucide-react";
 
 export default function Home() {
   return (
-    <main>
+    <main className="flex flex-col min-h-screen">
       <NavBar />
-      <div>
+      <div className="flex-1">
         <HeroSection
           badge={{
             text: "New Feature Alert",
@@ -26,15 +27,16 @@ export default function Home() {
             },
             {
               text: "Learn More",
-              href: "/docs",
+              href: "#features",
             },
           ]}
           image={{
-            light: "https://www.launchuicomponents.com/app-light.png",
-            dark: "https://www.launchuicomponents.com/app-dark.png", // Ignored but still provided
+            light: "/images/product-image.png",
+            dark: "/images/product-image.png", 
             alt: "Rina AI Dashboard Preview",
           }}
         />
+        <FeaturesSection />
       </div>
     </main>
   );
