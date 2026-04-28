@@ -26,16 +26,16 @@ const CodeSnippet = ({ id }: Props) => {
   right: 50px;
   border: none;}')
 
-  iframe.src = "https://rina-ai.netlify.app/chatbot";
+  iframe.src = "https://rina2.netlify.app/chatbot";
   iframe.classList.add("chat-frame");
   document.body.appendChild(iframe);
 
   window.addEventListener('message', (e) => {
-  if (e.origin !== 'https://rina-ai.netlify.app') return null;
+  if (e.origin !== 'https://rina2.netlify.app') return null;
   let dimensions = JSON.parse(e.data);
   iframe.width = dimensions.width;
   iframe.height = dimensions.height;
-  iframe.contentWindow.postMessage("${id}", "https://rina-ai.netlify.app/")
+  iframe.contentWindow.postMessage("${id}", "https://rina2.netlify.app/")
   });
 `;
 
