@@ -2,7 +2,7 @@
 
 import { useChatTime } from "@/hooks/conversation/use-conversation";
 import React from "react";
-import { Card, CardContent, CardDescription } from "../ui/card";
+import { Card, CardContent } from "../ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { MessageSquareWarning, User } from "lucide-react";
 

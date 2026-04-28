@@ -1,12 +1,12 @@
 import React from "react";
 import BreadCrumb from "./bread-crumb";
-import { Headphones, Star, Trash, Bell } from "lucide-react";
+import { Headphones, Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 
-type Props = object;
 
-const InfoBar = (props: Props) => {
+
+const InfoBar = () => {
   return (
     <div className="sticky top-0 z-30 flex w-full items-center justify-between border-b bg-[#f9fbfc]/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-[#f9fbfc]/60">
       <div className="flex items-center gap-4">

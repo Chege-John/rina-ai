@@ -54,7 +54,7 @@ export const useConversation = () => {
     if (domainId) {
       console.log("DEBUG: Subscribing to domain channel:", domainId);
       const channel = pusherClient.subscribe(domainId);
-      channel.bind("new-message", async (data: any) => {
+      channel.bind("new-message", async () => {
         console.log("DEBUG: Received domain-level update, refreshing rooms");
         const rooms = await onGetDomainChatRooms(domainId);
         if (rooms && rooms.customer) {
@@ -234,7 +234,7 @@ export const useChatWindow = () => {
           const newMessage = {
             ...data.chat,
             // Ensure the message content is captured regardless of property name
-            message: data.chat.message || (data.chat as any).content || "",
+            message: data.chat.message || (data.chat as { content?: string }).content || "",
             createdAt: new Date(data.chat.createdAt),
           };
           console.log("DEBUG: Updating chats state with:", newMessage);
