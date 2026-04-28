@@ -11,6 +11,7 @@ import {
   ChatBotMessageSchema,
   ConversationSearchSchema,
   ConversationSearchProps,
+  ChatBotMessageProps,
 } from "@/schemas/conversation.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useRef, useState } from "react";
