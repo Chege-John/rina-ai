@@ -19,6 +19,7 @@ const SignUpFormProvider = ({ children }: Props) => {
           <div className="flex flex-col justify-between gap-3 h-full">
             <Loader loading={isLoading}>{children}</Loader>
           </div>
+          <div id="clerk-captcha"></div>
         </form>
       </FormProvider>
     </AuthContextProvider>

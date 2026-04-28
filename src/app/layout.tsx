@@ -24,13 +24,14 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="light" style={{ colorScheme: "light" }}>
+    <html lang="en" suppressHydrationWarning>
       <head />
       <body className={`${inter.variable} ${figtree.variable} ${inter.className}`}>
         <ClerkProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="light"
+            enableSystem={false}
             disableTransitionOnChange
           >
             {children}

@@ -38,6 +38,7 @@ export const useSignInForm = () => {
           setLoading(false);
         }
       } catch (error: unknown) {
+        setLoading(false);
         // Narrow down the error type before accessing properties
         if (error instanceof Error) {
           // Check if error is an instance of the Error class
@@ -53,11 +54,12 @@ export const useSignInForm = () => {
             });
           }
         } else {
-          // Handle the case where error is not an instance of Error (e.g., network error, or a custom error type)
-          toast({
-            title: "Error",
-            description: "An unknown error occurred. Please try again.",
-          });
+        // Handle the case where error is not an instance of Error (e.g., network error, or a custom error type)
+        const clerkError = error as { errors: { longMessage: string }[] };
+        toast({
+          title: "Error",
+          description: clerkError?.errors?.[0]?.longMessage || "An unknown error occurred. Please try again.",
+        });
         }
       }
     }

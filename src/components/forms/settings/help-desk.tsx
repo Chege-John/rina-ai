@@ -60,7 +60,7 @@ const HelpDesk = ({ id }: Props) => {
           </div>
           <Button
             type="submit"
-            className="bg-orange-400 hover:bg-orange-600 hover:opacity-70 transition duration-150 ease-in-out text-white font-semibold"
+            className="bg-black hover:bg-orange-600 hover:opacity-70 transition duration-150 ease-in-out text-white font-semibold"
           >
             Create
           </Button>
