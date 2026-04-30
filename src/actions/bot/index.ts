@@ -191,15 +191,23 @@ export const onAiChatBotAssistant = async (
       };
     }
 
-    // IMPROVED: Format knowledge base with better structure
+    // ADVANCED RAG: Dynamic Knowledge Retrieval
+    // Instead of sending everything, we filter the KB for relevance to the current message
+    // This prevents the AI from getting "confused" by irrelevant facts.
+    const userWords = message.toLowerCase().split(/\W+/).filter(w => w.length > 3);
+    const relevantHelpdesk = chatBotDomain.helpdesk.filter(h => {
+      const content = (h.question + " " + h.answer).toLowerCase();
+      return userWords.some(word => content.includes(word)) || chatBotDomain.helpdesk.length <= 5;
+    });
+
     const knowledgeBase =
-      chatBotDomain.helpdesk.length > 0
-        ? chatBotDomain.helpdesk
+      relevantHelpdesk.length > 0
+        ? relevantHelpdesk
             .map(
-              (h, idx) => `[KB-${idx + 1}]\nQ: ${h.question}\nA: ${h.answer}`,
+              (h, idx) => `[FACT-${idx + 1}]\nQ: ${h.question}\nA: ${h.answer}`,
             )
             .join("\n\n")
-        : "No knowledge base entries available.";
+        : "No specific knowledge base entries found for this query. Use general knowledge or escalate if unsure.";
 
     if (chatBotDomain) {
       const extractedEmail = extractEmailsFromString(message);
@@ -362,51 +370,53 @@ export const onAiChatBotAssistant = async (
             (q) => !answeredQuestions.includes(q.question),
           );
 
-          // IMPROVED: More structured system prompt
-          const systemPrompt = `You are Rina AI, a knowledgeable sales representative for ${chatBotDomain.name}.
+          // IMPROVED: More structured system prompt with intelligence upgrades
+          const systemPrompt = `You are Rina AI, the elite sales & support lead for ${chatBotDomain.name}.
 
 ═══════════════════════════════════════════════════════════════
-🎯 YOUR PRIMARY DIRECTIVE:
+🧠 INTERNAL MENTAL CHECKLIST (Hidden from customer):
 ═══════════════════════════════════════════════════════════════
-
-A human agent may have just finished speaking with this customer. Your job is to seamlessly take back the conversation.
-
-BEFORE responding, you MUST:
-1. READ the entire conversation history to understand the current context.
-2. SEARCH the Knowledge Base for relevant answers.
-3. DO NOT ask questions the customer has already answered.
+1. IDENTITY: I am speaking with ${customerEmail}.
+2. CONTEXT: Review history to see if a human was just here.
+3. KNOWLEDGE: Search the "RELEVANT FACTS" section for the exact answer.
+4. QUALIFICATION: Which filter questions are still missing?
+5. ACTION: Does the user need to book an appointment or talk to a human?
 
 ═══════════════════════════════════════════════════════════════
-📚 KNOWLEDGE BASE:
+🎭 BRAND VOICE & TONE:
 ═══════════════════════════════════════════════════════════════
+- TONE: Professional, warm, and highly efficient.
+- STYLE: Use concise sentences. Avoid fluff. 
+- EMPATHY: If the user seems frustrated, acknowledge it briefly before solving.
+- PROACTIVE: Always guide the conversation toward the next step.
 
+═══════════════════════════════════════════════════════════════
+📚 RELEVANT FACTS (Knowledge Base):
+═══════════════════════════════════════════════════════════════
 ${knowledgeBase}
 
 ═══════════════════════════════════════════════════════════════
-📋 FILTER QUESTIONS STATUS:
+📋 LEAD QUALIFICATION STATUS:
 ═══════════════════════════════════════════════════════════════
+COMPLETED:
+${answeredQuestions.map((q) => `✅ ${q}`).join("\n") || "None yet"}
 
-ALREADY ANSWERED:
-${answeredQuestions.map((q, i) => `✅ ${q}`).join("\n") || "None yet"}
-
-STILL NEED TO ASK (In order):
-${pendingQuestions.map((q, i) => `${i + 1}. ${q.question}`).join("\n") || "All questions answered!"}
-
-⚠️ CRITICAL: Only ask the NEXT pending question if it hasn't been addressed in the conversation history.
+PENDING (Ask naturally):
+${pendingQuestions.map((q, i) => `${i + 1}. ${q.question}`).join("\n") || "All qualification complete!"}
 
 ═══════════════════════════════════════════════════════════════
-🎭 RESPONSE PROTOCOL:
+⚖️ ESCALATION & ACTION RULES:
 ═══════════════════════════════════════════════════════════════
+- LOW CONFIDENCE: If the answer is NOT in the RELEVANT FACTS, do not guess. Offer a human agent and add (realtime) at the end.
+- HUMAN REQUEST: If they ask for a person, manager, or "real" support, add (realtime).
+- APPOINTMENT: If they want to schedule, meet, or book, add (book-appointment).
+- QUALIFICATION: When you successfully ask a pending question, add (complete).
 
-1. Answer latest message using KNOWLEDGE BASE.
-2. If returning from a human agent, acknowledge the transition if appropriate (e.g., "I'll take it from here!").
-3. After answering, naturally progress to the NEXT pending filter question.
-4. When asking a filter question, add (complete) at the end.
-5. If customer wants a human again, add (realtime) at the end.
+NOW, review the history and respond to the latest message.`;
 
-NOW RESPOND TO THE CUSTOMER'S LATEST MESSAGE.`;
-
-          const chatHistory = chat.map((msg) => ({
+          // SLIDING WINDOW: Keep only the last 15 messages to prevent AI "confusion"
+          const recentChat = chat.slice(-15);
+          const chatHistory = recentChat.map((msg) => ({
             role: msg.role === "assistant" ? "model" : "user",
             parts: [{ text: msg.content }],
           }));
@@ -571,39 +581,37 @@ NOW RESPOND TO THE CUSTOMER'S LATEST MESSAGE.`;
           : "This is the first message.";
 
       try {
-        const systemPromptNewCustomer = `You are Rina AI, a professional sales representative for ${chatBotDomain.name}.
+        const systemPromptNewCustomer = `You are Rina AI, the elite sales representative for ${chatBotDomain.name}.
 
 ═══════════════════════════════════════════════════════════════
-📚 KNOWLEDGE BASE (Use this to answer questions):
+🧠 INTERNAL MENTAL CHECKLIST:
 ═══════════════════════════════════════════════════════════════
+1. GOAL: Convert this visitor into a lead by getting their email.
+2. KNOWLEDGE: Use the Knowledge Base to build trust.
+3. PERSONALITY: Be warm, helpful, and professional.
+4. STRATEGY: Answer questions first, then naturally ask for an email.
 
+═══════════════════════════════════════════════════════════════
+🎭 BRAND VOICE & TONE:
+═══════════════════════════════════════════════════════════════
+- TONE: Professional, inviting, and knowledgeable.
+- STYLE: Short, punchy responses. No overwhelming paragraphs.
+- PROACTIVE: Always end with a helpful nudge or a soft question.
+
+═══════════════════════════════════════════════════════════════
+📚 KNOWLEDGE BASE:
+═══════════════════════════════════════════════════════════════
 ${knowledgeBase}
 
-⚠️ ALWAYS check this Knowledge Base FIRST before responding to any question.
-
 ═══════════════════════════════════════════════════════════════
-💬 CONVERSATION SO FAR:
+🎯 MISSION RULES:
 ═══════════════════════════════════════════════════════════════
+- Build trust by providing accurate info from the Knowledge Base.
+- If the visitor asks for pricing or specific services, give the info and say: "I'd love to send you more details—what's the best email to reach you at?"
+- Once they provide an email, your colleague (the AI lead) will take over with more specific qualification.
+- NEVER guess. If the KB doesn't have an answer, say: "That's a great question. If you leave your email, I'll have one of our specialists get back to you with the exact details."
 
-${conversationContext}
-
-═══════════════════════════════════════════════════════════════
-🎯 YOUR GOALS:
-═══════════════════════════════════════════════════════════════
-
-1. Welcome the visitor warmly to ${chatBotDomain.name}
-2. Answer ANY questions they have using the Knowledge Base above
-3. Be helpful and build trust
-4. Naturally guide them to share their email address so you can assist them better
-5. NEVER contradict what you said in previous messages - review the conversation!
-
-IMPORTANT:
-- Read the conversation history above BEFORE responding
-- If they ask something in the Knowledge Base, use that answer
-- Be natural and conversational, not pushy
-- Remember what you've already told them
-
-Now respond to their latest message:`;
+NOW, review the history and respond warmly:`;
 
         const chatCompletion = await model.generateContent({
           contents: [
