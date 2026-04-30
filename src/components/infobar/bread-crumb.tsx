@@ -4,8 +4,9 @@
 
 import useSideBar from "@/context/use-sidebar";
 import React from "react";
-import { Loader } from "../loader";
 import { Switch } from "../ui/switch";
+
+import { Loader2 } from "lucide-react";
 
 type Props = {};
 
@@ -27,13 +28,16 @@ const BreadCrumb = (props: Props) => {
       <div className="flex gap-5 items-center">
         <h2 className="text-3xl font-bold capitalize">{page}</h2>
         {page === "conversation" && chatRoom && (
-          <Loader loading={loading} className="p-0 inline">
+          <div className="flex items-center gap-2">
             <Switch
               defaultChecked={realtime}
               onCheckedChange={(checked) => onActivateRealtime(checked)}
               className="data-[state=checked]:bg-orange-500 data-[state=unchecked]:bg-gray-300"
             />
-          </Loader>
+            {loading && (
+              <Loader2 className="w-4 h-4 animate-spin text-orange-500" />
+            )}
+          </div>
         )}
       </div>
 
@@ -41,14 +45,14 @@ const BreadCrumb = (props: Props) => {
         {page == "settings"
           ? "Manage your account settings, preferences and  integrations"
           : page == "dashboard"
-          ? "A detailed overview of your metrics, usage, customers and more"
-          : page == "appointment"
-          ? "View and edit all your appointments"
-          : page == "email-marketing"
-          ? "Send personalized emails to your customers"
-          : page == "integration"
-          ? "Connect third-party applications into Rina-Ai"
-          : "Modify domain settings, change chatbot options, enter sales questions and train your bot to do what you want it to."}
+            ? "A detailed overview of your metrics, usage, customers and more"
+            : page == "appointment"
+              ? "View and edit all your appointments"
+              : page == "email-marketing"
+                ? "Send personalized emails to your customers"
+                : page == "integration"
+                  ? "Connect third-party applications into Rina-Ai"
+                  : "Modify domain settings, change chatbot options, enter sales questions and train your bot to do what you want it to."}
       </p>
     </div>
   );

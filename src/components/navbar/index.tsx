@@ -44,7 +44,7 @@ function NavBar() {
           <Link href="/dashboard">
             <Button
               variant="default"
-              className="hidden md:flex bg-orange px-4 py-2 rounded-md text-white hover:bg-orange/90"
+              className="hidden md:flex bg-ir-orange px-4 py-2 rounded-md text-white hover:bg-ir-orange/90"
             >
               Free Trial
             </Button>
@@ -84,7 +84,7 @@ function NavBar() {
                   </Link>
                 ))}
                 <Link href="/dashboard" className="mt-4">
-                  <Button className="w-full bg-orange text-white hover:bg-orange/90">
+                  <Button className="w-full bg-ir-orange text-white hover:bg-ir-orange/90">
                     Free Trial
                   </Button>
                 </Link>

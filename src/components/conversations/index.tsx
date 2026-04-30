@@ -25,15 +25,17 @@ const ConversationMenu = ({ domains }: Props) => {
   const { onGetActiveChatMessages, register, chatRooms, loading } =
     useConversation();
   return (
-    <div className="py-3 px-0 h-full flex flex-col">
-      <div className="px-4 pb-4 border-b">
+    <div className="py-3 px-0 h-full flex flex-col overflow-hidden">
+      <div className="px-4 pb-4 border-b shrink-0">
         <h2 className="text-xl font-bold">Inbox</h2>
         <p className="text-sm text-muted-foreground">Manage your conversations</p>
       </div>
       <TabsMenu triggers={TABS_MENU}>
-        <TabsContent value="unread" className="flex-1 overflow-hidden flex flex-col mt-0">
-          <div className="flex flex-col h-full">
-            <ConversationSearch domains={domains} register={register} />
+        <TabsContent value="unread" className="flex-1 overflow-hidden mt-0">
+          <div className="flex flex-col h-full overflow-hidden">
+            <div className="shrink-0">
+              <ConversationSearch domains={domains} register={register} />
+            </div>
             <div className="flex-1 overflow-y-auto px-3 pb-4 scrollbar-hide">
               <Loader loading={loading}>
                 {chatRooms.length ? (
@@ -62,15 +64,15 @@ const ConversationMenu = ({ domains }: Props) => {
             </div>
           </div>
         </TabsContent>
-        <TabsContent value="all">
+        <TabsContent value="all" className="flex-1 overflow-y-auto mt-0">
           <Separator orientation="horizontal" className="mt-5 bg-gray-200" />
           all
         </TabsContent>
-        <TabsContent value="expired">
+        <TabsContent value="expired" className="flex-1 overflow-y-auto mt-0">
           <Separator orientation="horizontal" className="mt-5 bg-gray-200" />
           expired
         </TabsContent>
-        <TabsContent value="starred">
+        <TabsContent value="starred" className="flex-1 overflow-y-auto mt-0">
           <Separator orientation="horizontal" className="mt-5 bg-gray-200" />
           starred
         </TabsContent>

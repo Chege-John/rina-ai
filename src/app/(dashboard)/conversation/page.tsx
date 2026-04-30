@@ -10,16 +10,18 @@ import React from "react";
 const ConversationPage = async () => {
   const domains = await onGetAllAccountDomains();
   return (
-    <div className="w-full h-full flex">
+    <div className="w-full h-full flex overflow-hidden">
       <div className="w-96 h-full flex flex-col shrink-0">
         <ConversationMenu domains={domains?.domains} />
       </div>
       <Separator orientation="vertical" />
-      <div className="w-full flex flex-col h-full">
+      <div className="w-full flex flex-col h-full overflow-hidden">
         <div className="px-5">
           <InfoBar />
         </div>
-        <Messenger />
+        <div className="flex-1 overflow-hidden">
+          <Messenger />
+        </div>
       </div>
     </div>
   );

@@ -12,32 +12,32 @@ const features = [
   {
     title: "AI-Powered Chatbots",
     description: "Deploy intelligent chatbots that learn from your content and engage visitors 24/7.",
-    icon: <Bot className="h-6 w-6 text-orange" />,
+    icon: <Bot className="h-6 w-6 text-ir-orange" />,
   },
   {
     title: "Real-time Conversations",
     description: "Seamlessly switch between AI and human support to ensure customer satisfaction.",
-    icon: <MessageSquare className="h-6 w-6 text-orange" />,
+    icon: <MessageSquare className="h-6 w-6 text-ir-orange" />,
   },
   {
     title: "Instant Integration",
     description: "Connect with your favorite tools and platforms in just a few clicks.",
-    icon: <Zap className="h-6 w-6 text-orange" />,
+    icon: <Zap className="h-6 w-6 text-ir-orange" />,
   },
   {
     title: "Enterprise Security",
     description: "Bank-grade encryption and compliance to keep your data safe and secure.",
-    icon: <ShieldCheck className="h-6 w-6 text-orange" />,
+    icon: <ShieldCheck className="h-6 w-6 text-ir-orange" />,
   },
   {
     title: "Global Reach",
     description: "Support multiple languages and reach customers anywhere in the world.",
-    icon: <Globe className="h-6 w-6 text-orange" />,
+    icon: <Globe className="h-6 w-6 text-ir-orange" />,
   },
   {
     title: "Advanced Analytics",
     description: "Gain deep insights into user interactions and bot performance.",
-    icon: <BarChart3 className="h-6 w-6 text-orange" />,
+    icon: <BarChart3 className="h-6 w-6 text-ir-orange" />,
   },
 ];
 
@@ -59,7 +59,7 @@ export function FeaturesSection() {
             key={index} 
             className="group relative overflow-hidden rounded-2xl border bg-background p-8 hover:shadow-md transition-shadow duration-300"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange/10 mb-4 group-hover:bg-orange/20 transition-colors">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-ir-orange/10 mb-4 group-hover:bg-ir-orange/20 transition-colors">
               {feature.icon}
             </div>
             <h3 className="text-xl font-bold mb-2">{feature.title}</h3>

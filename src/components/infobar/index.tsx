@@ -25,7 +25,7 @@ const InfoBar = () => {
         
         <Avatar className="h-9 w-9 border border-border cursor-pointer hover:opacity-80 transition-opacity">
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback className="bg-orange text-white">CN</AvatarFallback>
+          <AvatarFallback className="bg-ir-orange text-white">CN</AvatarFallback>
         </Avatar>
       </div>
     </div>

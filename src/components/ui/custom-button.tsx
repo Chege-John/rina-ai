@@ -15,7 +15,7 @@ const CustomButton = forwardRef<HTMLButtonElement, CustomButtonProps>(
           ref={ref}
           variant="default"
           className={cn(
-            "bg-gradient-to-r from-orange to-grandis text-white shadow-lg hover:shadow-xl hover:opacity-90 transition-all duration-200",
+            "bg-gradient-to-r from-ir-orange to-grandis text-white shadow-lg hover:shadow-xl hover:opacity-90 transition-all duration-200",
             className
           )}
           {...props}
