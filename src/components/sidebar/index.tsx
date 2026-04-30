@@ -23,11 +23,8 @@ const SideBar = ({ domains }: Props) => {
   return (
     <div
       className={cn(
-        "bg-background h-full w-[60px] fill-mode-fowards fixed md:relative border-r border-border",
-        expand == undefined && "",
-        expand == true
-          ? "animate-open-sidebar w-[300px]"
-          : expand == false && "animate-close-sidebar w-[60px]"
+        "bg-background h-full fixed md:relative border-r border-border transition-all duration-300 ease-in-out z-[50]",
+        expand ? "w-[300px]" : "w-[64px]"
       )}
     >
       {expand ? (

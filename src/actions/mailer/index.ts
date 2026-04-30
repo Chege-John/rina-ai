@@ -2,7 +2,11 @@
 
 import nodemailer from "nodemailer";
 
-export const onMailer = async (email: string) => {
+export const onMailer = async (
+  email: string,
+  customerEmail?: string,
+  domainName?: string,
+) => {
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
@@ -15,8 +19,8 @@ export const onMailer = async (email: string) => {
 
   const mailOptions = {
     to: email,
-    subject: "Realtime Support",
-    text: "One of your customers on Rina-AI, just switched to realtime mode",
+    subject: `Realtime Support Request - ${domainName || "Rina-AI"}`,
+    text: `You have a new realtime support request!\n\nCustomer: ${customerEmail || "Anonymous"}\nDomain: ${domainName || "Not Specified"}\n\nPlease log in to your dashboard to assist them.`,
   };
 
   try {

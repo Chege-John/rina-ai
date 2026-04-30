@@ -205,22 +205,25 @@ export const onAiChatBotAssistant = async (
       const extractedEmail = extractEmailsFromString(message);
       if (extractedEmail) {
         customerEmail = extractedEmail[0];
-        console.log("DEBUG: Extracted Email from message:", customerEmail);
+        console.log("DEBUG: Extracted Email from current message:", customerEmail);
       } else {
         console.log(
-          "DEBUG: No emails found in message. Checking chat history...",
+          "DEBUG: No emails found in current message. Checking history for USER emails...",
         );
+        // ONLY extract emails from user-provided messages to avoid picking up the bot's own support email
         for (let i = chat.length - 1; i >= 0; i--) {
-          const historyEmail = extractEmailsFromString(chat[i].content);
-          if (historyEmail) {
-            customerEmail = historyEmail[0];
-            console.log("DEBUG: Extracted Email from history:", customerEmail);
-            break;
+          if (chat[i].role === "user") {
+            const historyEmail = extractEmailsFromString(chat[i].content);
+            if (historyEmail) {
+              customerEmail = historyEmail[0];
+              console.log("DEBUG: Extracted Email from history:", customerEmail);
+              break;
+            }
           }
         }
       }
 
-      console.log("Extracted Email:", customerEmail);
+      console.log("Extracted Email Result:", customerEmail);
 
       if (customerEmail) {
         console.log("DEBUG: Before checkCustomer query");
@@ -238,7 +241,7 @@ export const onAiChatBotAssistant = async (
             customer: {
               where: {
                 email: {
-                  startsWith: customerEmail,
+                  equals: customerEmail,
                 },
               },
               select: {
@@ -326,7 +329,11 @@ export const onAiChatBotAssistant = async (
             const clerkId = checkCustomer.user.clerkId;
             const clerk = await clerkClient();
             const user = await clerk.users.getUser(clerkId);
-            await onMailer(user.emailAddresses[0].emailAddress);
+            await onMailer(
+              user.emailAddresses[0].emailAddress,
+              customerEmail,
+              chatBotDomain.name,
+            );
             await prisma.chatRoom.update({
               where: { id: chatRoomId },
               data: { mailed: true },
@@ -443,7 +450,11 @@ NOW RESPOND TO THE CUSTOMER'S LATEST MESSAGE.`;
                   const clerkId = checkCustomer.user.clerkId;
                   const clerk = await clerkClient();
                   const user = await clerk.users.getUser(clerkId);
-                  await onMailer(user.emailAddresses[0].emailAddress);
+                  await onMailer(
+                    user.emailAddresses[0].emailAddress,
+                    customerEmail,
+                    chatBotDomain.name,
+                  );
                   await prisma.chatRoom.update({
                     where: { id: chatRoomId },
                     data: { mailed: true },

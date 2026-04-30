@@ -27,19 +27,19 @@ const MaxMenu = ({ current, domains, onExpand, onSignOut }: Props) => {
           <Image
             src="/images/logo.png"
             alt="Rina AI Logo"
-            className="animate-fade-in delay-300 fill-mode-forwards rounded-lg"
+            className="rounded-lg"
             width={32}
             height={32}
           />
-          <span className="font-bold text-lg animate-fade-in delay-300">Rina AI</span>
+          <span className="font-bold text-lg">Rina AI</span>
         </div>
         <Menu
-          className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors animate-fade-in delay-300 fill-mode-forwards"
+          className="cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
           onClick={onExpand}
         />
       </div>
       
-      <div className="flex flex-col flex-1 animate-fade-in delay-300 fill-mode-forwards overflow-y-auto">
+      <div className="flex flex-col flex-1 overflow-y-auto">
         <div className="flex flex-col gap-1">
           <p className="text-xs font-medium text-muted-foreground mb-2 px-2 uppercase tracking-wider">Menu</p>
           {SIDE_BAR_MENU.map((menu, key) => (
