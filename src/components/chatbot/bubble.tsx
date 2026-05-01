@@ -78,11 +78,11 @@ const Bubble = ({ message, createdAt, ghost, isOwnerView }: Props) => {
       {avatarContent}
       <div
         className={cn(
-          "flex flex-col gap-2 min-w-[200px] max-w-[70%] p-4 shadow-sm text-sm relative",
+          "flex flex-col gap-2 min-w-[200px] max-w-[70%] p-4 shadow-sm text-[13px] relative",
           !isUser
             ? "bg-white border border-gray-100 rounded-2xl rounded-bl-none text-black font-medium" // Them (Left): White Bubble, Black Text
             : ghost
-            ? "bg-orange-100 rounded-2xl rounded-br-none text-black font-medium border border-orange-200"
+            ? "bg-[#F97316] rounded-2xl rounded-br-none text-black font-medium "
             : "bg-[#F97316] text-white font-medium rounded-2xl rounded-br-none border-none" // Me (Right): Orange Bubble (Hex enforced), White Text
         )}
       >
